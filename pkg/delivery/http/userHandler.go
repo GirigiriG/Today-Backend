@@ -22,7 +22,6 @@ type UserHandler struct {
 
 //NewUserHandler register user service and http router
 func NewUserHandler(userCase *user.Service, r *mux.Router) *UserHandler {
-
 	return &UserHandler{
 		userService: userCase,
 		router:      r,
@@ -94,7 +93,6 @@ func (handler *UserHandler) createNewUser(w http.ResponseWriter, r *http.Request
 func handleError(e error, w http.ResponseWriter) {
 	errorMsg, _ := json.Marshal(e.Error())
 	w.Write(errorMsg)
-
 }
 
 //HandleUserRoutes handler for user
