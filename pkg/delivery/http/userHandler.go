@@ -3,7 +3,6 @@ package delivery
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 
 	middleware "github.com/GirigiriG/Clean-Architecture-golang/middlerware"
@@ -43,7 +42,7 @@ func (handler *UserHandler) getUserByID(w http.ResponseWriter, r *http.Request) 
 		panic(err)
 	}
 
-	w.Write(user)
+	json.NewEncoder(w).Encode(user)
 }
 
 func (handler *UserHandler) deleteUserByID(w http.ResponseWriter, r *http.Request) {
@@ -61,32 +60,24 @@ func (handler *UserHandler) deleteUserByID(w http.ResponseWriter, r *http.Reques
 func (handler *UserHandler) createNewUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	userOutCh := make(chan []byte, 1)
-
-	var u user.User
+	var newUser user.User
 
 	defer r.Body.Close()
-	body, _ := ioutil.ReadAll(r.Body)
 
-	json.Unmarshal(body, &u)
+	json.NewDecoder(r.Body).Decode(&newUser)
+	u, err := handler.userService.CreateNewUser(&newUser)
 
-	go func(u *user.User) {
-		u, err := handler.userService.CreateNewUser(u)
-		if err != nil {
-			userOutCh <- []byte(err.Error())
-		}
+	if err != nil {
+		w.Write([]byte(err.Error()))
+	}
 
-		resp, err := json.Marshal(u)
+	u, err = handler.userService.CreateNewUser(u)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+	}
+	fmt.Println(u)
 
-		if err != nil {
-			panic(err)
-		}
-
-		userOutCh <- resp
-
-	}(&u)
-
-	w.Write(<-userOutCh)
+	json.NewEncoder(w).Encode(u)
 
 }
 

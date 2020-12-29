@@ -15,11 +15,7 @@ func NewTaskService(repo Repository) *Service {
 
 //CreateTask creates new task record
 func (s *Service) CreateTask(task *Task) error {
-	newTask, err := NewTask(task)
-	if err != nil {
-		return err
-	}
-	err = s.repo.CreateTask(newTask)
+	err := s.repo.CreateTask(task)
 
 	if err != nil {
 		return err

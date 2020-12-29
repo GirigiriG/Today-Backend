@@ -31,7 +31,6 @@ func (repo *repo) CreateTask(t *Task) error {
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 

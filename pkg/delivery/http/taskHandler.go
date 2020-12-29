@@ -33,13 +33,38 @@ func (handler *TaskHandler) createNewTask(w http.ResponseWriter, r *http.Request
 	data, err := task.NewTask(newTask)
 	if err != nil {
 		w.Write([]byte(err.Error()))
+		return
 	}
 
 	if err := handler.taskService.CreateTask(data); err != nil {
-		panic(err)
+		w.Write([]byte(err.Error()))
+		return
 	}
+}
+
+func (handler *TaskHandler) FindAllTaskByProjectID(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	type projectIds struct {
+		ProjectIDs []string
+	}
+	defer r.Body.Close()
+
+	taskProjectIds := &projectIds{}
+	if err := json.NewDecoder(r.Body).Decode(taskProjectIds); err != nil {
+		w.Write([]byte(err.Error()))
+	}
+
+	tasks, err := handler.taskService.FindAllTaskByProjectID(taskProjectIds.ProjectIDs)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+	json.NewEncoder(w).Encode(tasks)
+
 }
 
 func (handler *TaskHandler) HandleTaskRoutes() {
 	handler.router.HandleFunc("/task/create", handler.createNewTask).Methods("GET")
+	handler.router.HandleFunc("/task/project", handler.FindAllTaskByProjectID).Methods("GET")
 }

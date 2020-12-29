@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	middleware "github.com/GirigiriG/Clean-Architecture-golang/middlerware"
-	googleoauth "github.com/GirigiriG/Clean-Architecture-golang/pkg"
 	"github.com/gorilla/mux"
 )
 
@@ -20,8 +19,8 @@ func NewUnprotectedRoutesHandler(r *mux.Router) *unprotectedRoutes {
 
 func (handler *unprotectedRoutes) login(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
-	url := googleoauth.GoogleOauthConfig.AuthCodeURL(googleoauth.RandomState)
-	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
+	//url := googleoauth.GoogleOauthConfig.AuthCodeURL(googleoauth.RandomState)
+	//http.Redirect(w, r, url, http.StatusTemporaryRedirect)
 	w.Write([]byte(middleware.GenerateJWToken()))
 }
 

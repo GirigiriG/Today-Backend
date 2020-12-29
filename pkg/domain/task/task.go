@@ -9,6 +9,16 @@ import (
 	"github.com/GirigiriG/Clean-Architecture-golang/tools"
 )
 
+const (
+	NAME_RQUIRED = "Please provide a task name"	
+	OWNER_ID_REQUIRED = "Pleasae provided owner id"	
+	STATUS_REQUIRED = "Pleasae provided status"	
+	PROJECT_ID_REQUIRED = "Pleasae provided project id"	
+	SPRINT_ID_REQUIRED = "Pleasae provided sprint id"	
+	HAS_REMAINING_HOURS = "This task still has remaining hours"	
+	
+)
+
 //Task Object
 type Task struct {
 	ID               uuid.UUID
@@ -19,8 +29,8 @@ type Task struct {
 	Status           string
 	CreatedBy        string
 	ProjectID        string
-	Estimate         int
-	Remaining        int
+	Estimate         int32
+	Remaining        int32
 	SprintID         string
 }
 
@@ -47,20 +57,25 @@ func NewTask(t *Task) (*Task, error) {
 }
 
 func validateNewTask(t *Task) error {
-	if t.TaskName == ""  {
-		return errors.New("Please provide a task name")
+
+	if t.TaskName == "" {
+		return errors.New(NAME_RQUIRED)
 	}
 	if t.OwnerID == "" {
-		return errors.New("Pleasae provided owner id")
+		return errors.New(OWNER_ID_REQUIRED)
 	}
 	if t.Status == "" {
-		return errors.New("Pleasae provided status")
+		return errors.New(STATUS_REQUIRED)
 	}
 	if t.ProjectID == "" {
-		return errors.New("Pleasae provided project id")
+		return errors.New(PROJECT_ID_REQUIRED)
 	}
 	if t.SprintID == "" {
-		return errors.New("Pleasae provided sprint id")
+		return errors.New(SPRINT_ID_REQUIRED)
+	}
+	if t.Status == "Closed" && t.Remaining > 0 {
+		return errors.New(HAS_REMAINING_HOURS)
+
 	}
 	return nil
 }
