@@ -8,11 +8,13 @@ import (
 	"github.com/gorilla/mux"
 )
 
+//TaskHandler struct 
 type TaskHandler struct {
 	taskService *task.Service
 	router      *mux.Router
 }
 
+//NewTaskHandler requires http router and service  
 func NewTaskHandler(service *task.Service, router *mux.Router) *TaskHandler {
 	return &TaskHandler{
 		taskService: service,
@@ -42,6 +44,7 @@ func (handler *TaskHandler) createNewTask(w http.ResponseWriter, r *http.Request
 	}
 }
 
+//FindAllTaskByProjectID get all task from slice of project Ids
 func (handler *TaskHandler) FindAllTaskByProjectID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
@@ -64,6 +67,7 @@ func (handler *TaskHandler) FindAllTaskByProjectID(w http.ResponseWriter, r *htt
 
 }
 
+//HandleTaskRoutes all routing for task struct
 func (handler *TaskHandler) HandleTaskRoutes() {
 	handler.router.HandleFunc("/task/create", handler.createNewTask).Methods("GET")
 	handler.router.HandleFunc("/task/project", handler.FindAllTaskByProjectID).Methods("GET")

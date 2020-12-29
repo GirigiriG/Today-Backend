@@ -11,9 +11,7 @@ import (
 func Test_CreateTaskRecord_Sucessfully(t *testing.T) {
 	newTask := createTaskRecord()
 	_, err := task.NewTask(newTask)
-	if err != nil {
-		t.Fatalf("Name not provided")
-	}
+	assert.Equal(t, nil, err)
 }
 
 func Test_Task_Name_Required(t *testing.T) {
