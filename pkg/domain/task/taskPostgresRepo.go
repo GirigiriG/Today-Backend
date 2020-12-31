@@ -7,10 +7,15 @@ import (
 	"github.com/lib/pq"
 )
 
+const (
+	NoRecordFound = "No record found"
+)
+
 type repo struct {
 	store *sql.DB
 }
 
+//NewTaskRepo instance of new repo
 func NewTaskRepo(db *sql.DB) Repository {
 	return &repo{
 		store: db,
@@ -34,14 +39,32 @@ func (repo *repo) CreateTask(t *Task) error {
 	return nil
 }
 
-func (rep *repo) DeleteTaskByID(ID string) error {
+//DeleteTaskByID delete record by id
+func (repo *repo) DeleteTaskByID(ID string) error {
 	return nil
 }
+
 func (repo *repo) FindTaskByID(ID string) (*Task, error) {
-	return nil, nil
+
+	query := `SELECT id FROM task WHERE id = $1`
+
+	rows, err := repo.store.Query(query, ID)
+	if err != nil {
+		return nil, errors.New(NoRecordFound)
+	}
+
+	t := &Task{}
+
+	for rows.Next() {
+		rows.Scan(&t.ID, &t.TaskName, &t.OwnerID, &t.CreatedDate, &t.LastModifiedDate,
+			&t.Status, &t.CreatedBy, &t.ProjectID, &t.Estimate, &t.Remaining, &t.SprintID)
+	}
+	return t, nil
+
 }
 
-func (repo *repo) FindAllTaskByProjectID(IDs []string) (*[]Task, error) {
+//FindAllTaskByProjectID find all test related to a project by projectid
+func (repo *repo) FindAllTaskByProjectID(IDs []string) ([]Task, error) {
 	var tasks []Task
 	query := `SELECT task_name FROM task WHERE project_id = ANY($1);`
 	rows, err := repo.store.Query(query, pq.Array(IDs))
@@ -56,7 +79,7 @@ func (repo *repo) FindAllTaskByProjectID(IDs []string) (*[]Task, error) {
 	}
 
 	if len(tasks) == 0 {
-		return nil, errors.New("No record found")
+		return nil, errors.New(NoRecordFound)
 	}
-	return &tasks, nil
+	return tasks, nil
 }

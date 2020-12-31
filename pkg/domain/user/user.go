@@ -4,15 +4,14 @@ import (
 	"errors"
 
 	"github.com/GirigiriG/Clean-Architecture-golang/tools"
-	uuid "github.com/satori/go.uuid"
 )
 
 //User struct
 type User struct {
-	ID        uuid.UUID `json: "id"`
-	FirstName string    `json: "first_name"`
-	LastName  string    `json: "last_name"`
-	Email     string    `json: "email"`
+	ID        string `json: "id"`
+	FirstName string `json: "first_name"`
+	LastName  string `json: "last_name"`
+	Email     string `json: "email"`
 }
 
 //CreateNewUser create new user record

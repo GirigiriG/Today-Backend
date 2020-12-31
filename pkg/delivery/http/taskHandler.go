@@ -8,13 +8,13 @@ import (
 	"github.com/gorilla/mux"
 )
 
-//TaskHandler struct 
+//TaskHandler struct
 type TaskHandler struct {
 	taskService *task.Service
 	router      *mux.Router
 }
 
-//NewTaskHandler requires http router and service  
+//NewTaskHandler requires http router and service
 func NewTaskHandler(service *task.Service, router *mux.Router) *TaskHandler {
 	return &TaskHandler{
 		taskService: service,
@@ -63,6 +63,7 @@ func (handler *TaskHandler) FindAllTaskByProjectID(w http.ResponseWriter, r *htt
 		w.Write([]byte(err.Error()))
 		return
 	}
+
 	json.NewEncoder(w).Encode(tasks)
 
 }

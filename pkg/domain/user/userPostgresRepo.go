@@ -3,13 +3,11 @@ package user
 import (
 	"database/sql"
 	"errors"
-
-	uuid "github.com/satori/go.uuid"
 )
 
 type repo struct {
 	store *sql.DB
-	u     uuid.UUID
+	u     string
 }
 
 //NewPostgressRepo accepts db handler
@@ -34,7 +32,7 @@ func (r *repo) FindByID(ID string) (*User, error) {
 		rows.Scan(&u.FirstName, &u.LastName, &u.Email, &u.ID)
 	}
 
-	if uuid.Equal(u.ID, uuid.NullUUID{}.UUID) {
+	if len(u.ID) == 0 {
 		return nil, errors.New("Record not found")
 	}
 

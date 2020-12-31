@@ -55,7 +55,7 @@ func HandleRoutes(db *sql.DB, router *mux.Router) {
 		content, err := ioutil.ReadAll(resp.Body)
 
 		if err != nil {
-			fmt.Printf("Unable to parse response: %s", err.Error())
+			w.Write(delivery.NewHttpError(http.StatusBadRequest, err.Error()))
 			http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 			return
 		}
@@ -68,7 +68,7 @@ func HandleRoutes(db *sql.DB, router *mux.Router) {
 
 		result, err := json.Marshal(googleResp)
 		if err != nil {
-			fmt.Printf("Unable to unmarshal json: %s", err.Error())
+			w.Write(delivery.NewHttpError(http.StatusBadRequest, err.Error()))
 			return
 		}
 		json.NewEncoder(w).Encode(result)

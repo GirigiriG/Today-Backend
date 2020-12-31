@@ -3,13 +3,14 @@ package tools
 import (
 	"net/http"
 
+	uuid "github.com/google/uuid"
 	"github.com/gorilla/mux"
-	uuid "github.com/satori/go.uuid"
 )
 
 //CreateUUID creates new uuid
-func CreateUUID() uuid.UUID {
-	return uuid.NewV4()
+func CreateUUID() string {
+	id := uuid.New()
+	return id.String()
 }
 
 //GetParam gets http params

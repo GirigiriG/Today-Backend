@@ -2,7 +2,6 @@ package delivery
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	middleware "github.com/GirigiriG/Clean-Architecture-golang/middlerware"
@@ -30,7 +29,7 @@ func NewUserHandler(userCase *user.Service, r *mux.Router) *UserHandler {
 func (handler *UserHandler) getUserByID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	ID := tools.GetParam("id", r)
-	fmt.Println(ID)
+
 	u, err := handler.userService.GetUserByID(ID)
 
 	if err != nil {
@@ -75,7 +74,6 @@ func (handler *UserHandler) createNewUser(w http.ResponseWriter, r *http.Request
 	if err != nil {
 		w.Write([]byte(err.Error()))
 	}
-	fmt.Println(u)
 
 	json.NewEncoder(w).Encode(u)
 

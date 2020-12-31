@@ -4,24 +4,21 @@ import (
 	"errors"
 	"time"
 
-	uuid "github.com/satori/go.uuid"
-
 	"github.com/GirigiriG/Clean-Architecture-golang/tools"
 )
 
 const (
-	NAME_RQUIRED = "Please provide a task name"	
-	OWNER_ID_REQUIRED = "Pleasae provided owner id"	
-	STATUS_REQUIRED = "Pleasae provided status"	
-	PROJECT_ID_REQUIRED = "Pleasae provided project id"	
-	SPRINT_ID_REQUIRED = "Pleasae provided sprint id"	
-	HAS_REMAINING_HOURS = "This task still has remaining hours"	
-	
+	NameRequired                    = "Please provide a task name"
+	OwnerIDRequired                 = "Pleasae provided owner id"
+	StatusRequired                  = "Pleasae provided status"
+	ProjectIDRequired               = "Pleasae provided project id"
+	SprintIDRequired                = "Pleasae provided sprint id"
+	RemainingHoursMustBeEqaulToZero = "This task still has remaining hours"
 )
 
 //Task Object
 type Task struct {
-	ID               uuid.UUID
+	ID               string
 	TaskName         string
 	OwnerID          string
 	CreatedDate      time.Time
@@ -59,23 +56,26 @@ func NewTask(t *Task) (*Task, error) {
 func validateNewTask(t *Task) error {
 
 	if t.TaskName == "" {
-		return errors.New(NAME_RQUIRED)
+		return errors.New(NameRequired)
 	}
+
 	if t.OwnerID == "" {
-		return errors.New(OWNER_ID_REQUIRED)
+		return errors.New(OwnerIDRequired)
 	}
+
 	if t.Status == "" {
-		return errors.New(STATUS_REQUIRED)
+		return errors.New(StatusRequired)
 	}
+
 	if t.ProjectID == "" {
-		return errors.New(PROJECT_ID_REQUIRED)
+		return errors.New(ProjectIDRequired)
 	}
 	if t.SprintID == "" {
-		return errors.New(SPRINT_ID_REQUIRED)
+		return errors.New(SprintIDRequired)
 	}
-	if t.Status == "Closed" && t.Remaining > 0 {
-		return errors.New(HAS_REMAINING_HOURS)
 
+	if t.Status == "Closed" && t.Remaining > 0 {
+		return errors.New(RemainingHoursMustBeEqaulToZero)
 	}
 	return nil
 }

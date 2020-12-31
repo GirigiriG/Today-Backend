@@ -43,7 +43,7 @@ func (s *Service) FindTaskByID(ID string) (*Task, error) {
 }
 
 //FindAllTaskByProjectID return all task by project the task IDs
-func (s *Service) FindAllTaskByProjectID(IDs []string) (*[]Task, error) {
+func (s *Service) FindAllTaskByProjectID(IDs []string) ([]Task, error) {
 	results, err := s.repo.FindAllTaskByProjectID(IDs)
 	if err != nil {
 		return nil, err

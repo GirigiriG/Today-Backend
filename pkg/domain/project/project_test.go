@@ -27,7 +27,7 @@ func Test_Project_Name_Required(t *testing.T) {
 	_, err := project.NewProject(newProjectRecord)
 
 	assert.NotNil(t, err)
-	assert.Equal(t, project.PROJECT_NAME_REQUIRED, err.Error())
+	assert.Equal(t, project.ProjectNameRequired, err.Error())
 }
 
 func Test_Status_Required(t *testing.T) {
@@ -37,7 +37,7 @@ func Test_Status_Required(t *testing.T) {
 	_, err := project.NewProject(newProjectRecord)
 
 	assert.NotNil(t, err)
-	assert.Equal(t, project.SPRINT_ID_REQUIRED, err.Error())
+	assert.Equal(t, project.StatusRequired, err.Error())
 }
 
 func Test_Sprint_ID_Required(t *testing.T) {
@@ -46,7 +46,7 @@ func Test_Sprint_ID_Required(t *testing.T) {
 
 	_, err := project.NewProject(newProjectRecord)
 	assert.NotNil(t, err)
-	assert.Equal(t, project.SPRINT_ID_REQUIRED, err.Error())
+	assert.Equal(t, project.SprintIDRequired, err.Error())
 }
 
 func Test_Project_Percentage_Must_Equal_100(t *testing.T) {
@@ -56,22 +56,22 @@ func Test_Project_Percentage_Must_Equal_100(t *testing.T) {
 	_, err := project.NewProject(newProjectRecord)
 
 	assert.NotNil(t, err)
-	assert.Equal(t, project.PROJECT_PERCENT_NOT_100, err.Error())
+	assert.Equal(t, project.PercentageMustEqaul100, err.Error())
 }
 
 func createNewProjectTestData() *project.Project {
-	id := tools.CreateUUID()
+	Id := tools.CreateUUID()
 	sprintRecordID := tools.CreateUUID()
 	createdBy := tools.CreateUUID()
 
 	return &project.Project{
-		ID:               id,
+		ID:               Id,
 		Status:           "Active",
 		SprintID:         sprintRecordID,
 		ProjectName:      "test project name",
 		Description:      "project descriptions",
 		CreatredBy:       createdBy,
-		Created_Date:     time.Now(),
+		CreatedDate:      time.Now(),
 		PercentComplete:  100,
 		LastModifiedDate: time.Now(),
 	}

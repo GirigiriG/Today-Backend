@@ -9,7 +9,7 @@ import (
 
 type repo struct {
 	store *sql.DB
-	u     uuid.UUID
+	u     string
 }
 
 //NewPostgressRepo accepts db handler
