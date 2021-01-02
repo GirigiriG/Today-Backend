@@ -1,5 +1,7 @@
 package task
 
+import "github.com/GirigiriG/Clean-Architecture-golang/tools"
+
 //Service hold taks and repo
 type Service struct {
 	repo Repository
@@ -13,28 +15,46 @@ func NewTaskService(repo Repository) *Service {
 	}
 }
 
-//CreateTask creates new task record
-func (s *Service) CreateTask(task *Task) error {
-	err := s.repo.CreateTask(task)
+//Create creates new task record
+func (s *Service) Create(t *Task) (*Task, error) {
 
+	taskToCreate, err := NewTask(t)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
+	taskToCreate.ID = tools.CreateUUID()
+
+	err = s.repo.Create(taskToCreate)
+	if err != nil {
+		return nil, err
+	}
+
+	return taskToCreate, nil
+}
+
+//DeleteByID delete task record by ID
+func (s *Service) DeleteByID(ID string) error {
+	if err := s.repo.DeleteByID(ID); err != nil {
+		return err
+	}
 	return nil
 }
 
-//DeleteTaskByID delete task record by ID
-func (s *Service) DeleteTaskByID(ID string) error {
-	if err := s.repo.DeleteTaskByID(ID); err != nil {
-		return err
+func (s *Service) Update(t *Task) (*Task, error) {
+	toUpdate, err := UpdateTask(t)
+	if err != nil {
+		return nil, err
 	}
-	return nil
+	if err = s.repo.Update(t); err != nil {
+		return nil, err
+	}
+	return toUpdate, nil
 }
 
 //FindTaskByID find task record by ID
-func (s *Service) FindTaskByID(ID string) (*Task, error) {
-	result, err := s.repo.FindTaskByID(ID)
+func (s *Service) FindByID(ID string) (*Task, error) {
+	result, err := s.repo.FindByID(ID)
 	if err != nil {
 		return nil, err
 	}
@@ -43,11 +63,10 @@ func (s *Service) FindTaskByID(ID string) (*Task, error) {
 }
 
 //FindAllTaskByProjectID return all task by project the task IDs
-func (s *Service) FindAllTaskByProjectID(IDs []string) ([]Task, error) {
-	results, err := s.repo.FindAllTaskByProjectID(IDs)
+func (s *Service) FindAllByProjectID(IDs []string) ([]Task, error) {
+	results, err := s.repo.FindAllByProjectID(IDs)
 	if err != nil {
 		return nil, err
 	}
-
 	return results, nil
 }

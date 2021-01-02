@@ -4,8 +4,6 @@ import (
 	"testing"
 	"time"
 
-	uuid "github.com/satori/go.uuid"
-
 	"github.com/stretchr/testify/assert"
 
 	"github.com/GirigiriG/Clean-Architecture-golang/tools"
@@ -42,7 +40,7 @@ func Test_Status_Required(t *testing.T) {
 
 func Test_Sprint_ID_Required(t *testing.T) {
 	newProjectRecord := createNewProjectTestData()
-	newProjectRecord.SprintID = uuid.Nil
+	newProjectRecord.SprintID = ""
 
 	_, err := project.NewProject(newProjectRecord)
 	assert.NotNil(t, err)
@@ -70,7 +68,7 @@ func createNewProjectTestData() *project.Project {
 		SprintID:         sprintRecordID,
 		ProjectName:      "test project name",
 		Description:      "project descriptions",
-		CreatredBy:       createdBy,
+		CreatedBy:        createdBy,
 		CreatedDate:      time.Now(),
 		PercentComplete:  100,
 		LastModifiedDate: time.Now(),

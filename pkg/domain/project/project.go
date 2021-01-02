@@ -3,8 +3,6 @@ package project
 import (
 	"errors"
 	"time"
-
-	"github.com/GirigiriG/Clean-Architecture-golang/tools"
 )
 
 const (
@@ -16,7 +14,7 @@ const (
 
 type Project struct {
 	ID               string
-	Status           string
+	Status           string `json:status,omitempty`
 	SprintID         string
 	ProjectName      string
 	CreatedBy        string
@@ -31,19 +29,27 @@ func NewProject(p *Project) (*Project, error) {
 	if err := validateProjectRecord(p); err != nil {
 		return nil, err
 	}
-	pid := tools.CreateUUID()
 
 	return &Project{
-		ID:               pid,
+		ID:               p.ID,
 		Status:           p.Status,
 		SprintID:         p.SprintID,
 		ProjectName:      p.ProjectName,
-		CreatedDate:      p.CreatedDate,
+		CreatedDate:      time.Now(),
 		CreatedBy:        p.CreatedBy,
-		LastModifiedDate: p.LastModifiedDate,
+		LastModifiedDate: time.Now(),
 		Description:      p.Description,
 		PercentComplete:  p.PercentComplete,
 	}, nil
+}
+
+func UpdateProject(p *Project) (*Project, error) {
+	if err := validateProjectRecord(p); err != nil {
+		return nil, err
+	}
+
+	p.LastModifiedDate = time.Now()
+	return p, nil
 }
 
 func validateProjectRecord(p *Project) error {

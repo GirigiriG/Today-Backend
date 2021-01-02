@@ -48,9 +48,9 @@ func (r *repo) Create(u *User) error {
 	return err
 }
 
-func (r *repo) DeleteUserByID(uuid string) error {
+func (r *repo) DeleteUserByID(ID string) error {
 	query := `DELETE FROM app_user WHERE id = $1`
-	result, err := r.store.Exec(query, uuid)
+	result, err := r.store.Exec(query, ID)
 
 	rowSize, _ := result.RowsAffected()
 	if rowSize == 0 {

@@ -2,8 +2,12 @@ package user
 
 import (
 	"errors"
+)
 
-	"github.com/GirigiriG/Clean-Architecture-golang/tools"
+const (
+	FirstNameRequired = "First name is required."
+	LastNameRequired  = "Last name is required."
+	EmailRequired     = "Email address is required."
 )
 
 //User struct
@@ -14,37 +18,33 @@ type User struct {
 	Email     string `json: "email"`
 }
 
-//CreateNewUser create new user record
-func (u *User) CreateNewUser(newUser *User) (*User, error) {
-
-	if newUser.FirstName == "" {
-
-		return nil, errors.New("Please provide first name")
+//NewUser create new user record
+func NewUser(newUser *User) (*User, error) {
+	if err := validateUserName(newUser); err != nil {
+		return nil, err
 	}
-
-	if newUser.LastName == "" {
-		return nil, errors.New("Please provide last name")
-	}
-	if newUser.Email == "" {
-		return nil, errors.New("Please provide email")
-	}
-
-	ID := tools.CreateUUID()
 
 	creatdUser := &User{
-		ID:        ID,
+		ID:        newUser.ID,
 		FirstName: newUser.FirstName,
 		LastName:  newUser.LastName,
 		Email:     newUser.Email,
 	}
 
 	return creatdUser, nil
-
 }
 
-func (u *User) validateUserName(name string) error {
-	if len(name) < 4 {
-		return errors.New("Username must be greater than 4")
+func validateUserName(u *User) error {
+	if len(u.FirstName) == 0 {
+
+		return errors.New(FirstNameRequired)
+	}
+
+	if len(u.LastName) == 0 {
+		return errors.New(LastNameRequired)
+	}
+	if len(u.Email) == 0 {
+		return errors.New(EmailRequired)
 	}
 	return nil
 }

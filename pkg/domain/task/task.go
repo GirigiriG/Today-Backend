@@ -3,8 +3,6 @@ package task
 import (
 	"errors"
 	"time"
-
-	"github.com/GirigiriG/Clean-Architecture-golang/tools"
 )
 
 const (
@@ -37,9 +35,8 @@ func NewTask(t *Task) (*Task, error) {
 		return nil, err
 	}
 
-	ID := tools.CreateUUID()
 	return &Task{
-		ID:               ID,
+		ID:               t.ID,
 		TaskName:         t.TaskName,
 		OwnerID:          t.OwnerID,
 		CreatedDate:      time.Now(),
@@ -51,6 +48,14 @@ func NewTask(t *Task) (*Task, error) {
 		Remaining:        t.Remaining,
 		SprintID:         t.SprintID,
 	}, nil
+}
+
+func UpdateTask(t *Task) (*Task, error) {
+	if err := validateNewTask(t); err != nil {
+		return nil, err
+	}
+	t.LastModifiedDate = time.Now()
+	return t, nil
 }
 
 func validateNewTask(t *Task) error {

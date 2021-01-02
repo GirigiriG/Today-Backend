@@ -4,6 +4,10 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/GirigiriG/Clean-Architecture-golang/tools"
+
+	"github.com/GirigiriG/Clean-Architecture-golang/pkg/delivery"
+
 	"github.com/GirigiriG/Clean-Architecture-golang/pkg/domain/task"
 	"github.com/gorilla/mux"
 )
@@ -27,21 +31,57 @@ func (handler *TaskHandler) createNewTask(w http.ResponseWriter, r *http.Request
 
 	defer r.Body.Close()
 
-	var newTask *task.Task
-	if err := json.NewDecoder(r.Body).Decode(&newTask); err != nil {
-		panic(err.Error())
-	}
-
-	data, err := task.NewTask(newTask)
+	t := &task.Task{}
+	err := json.NewDecoder(r.Body).Decode(t)
 	if err != nil {
-		w.Write([]byte(err.Error()))
+		w.Write(delivery.NewHttpError(http.StatusBadRequest, "Bad request."))
 		return
 	}
 
-	if err := handler.taskService.CreateTask(data); err != nil {
-		w.Write([]byte(err.Error()))
+	t, err = handler.taskService.Create(t)
+	if err != nil {
+		w.Write(delivery.NewHttpError(http.StatusBadRequest, "Bad request."))
 		return
 	}
+
+	json.NewEncoder(w).Encode(t)
+}
+
+func (handler *TaskHandler) FindByID(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	t := &task.Task{}
+	defer r.Body.Close()
+
+	err := json.NewDecoder(r.Body).Decode(t)
+	if err != nil {
+		w.Write(delivery.NewHttpError(http.StatusBadRequest, "Bad request."))
+		return
+	}
+
+	t, err = handler.taskService.FindByID(t.ID)
+
+	if err := json.NewDecoder(r.Body).Decode(t); err != nil {
+		w.Write(delivery.NewHttpError(http.StatusNotFound, "Record not found."))
+		return
+	}
+
+	json.NewEncoder(w).Encode(t)
+
+}
+
+func (handler *TaskHandler) Update(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+}
+
+func (handler *TaskHandler) Delete(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	ID := tools.GetParam("id", r)
+
+	if err := handler.taskService.DeleteByID(ID); err != nil {
+		w.Write(delivery.NewHttpError(http.StatusNotFound, "Record not found."))
+		return
+	}
+	w.Write(delivery.NewHttpError(http.StatusOK, "Ok"))
 }
 
 //FindAllTaskByProjectID get all task from slice of project Ids
@@ -49,27 +89,28 @@ func (handler *TaskHandler) FindAllTaskByProjectID(w http.ResponseWriter, r *htt
 	w.Header().Set("Content-Type", "application/json")
 
 	type projectIds struct {
-		ProjectIDs []string
+		Ids []string
 	}
 	defer r.Body.Close()
 
 	taskProjectIds := &projectIds{}
 	if err := json.NewDecoder(r.Body).Decode(taskProjectIds); err != nil {
-		w.Write([]byte(err.Error()))
+		w.Write(delivery.NewHttpError(http.StatusInternalServerError, err.Error()))
 	}
 
-	tasks, err := handler.taskService.FindAllTaskByProjectID(taskProjectIds.ProjectIDs)
+	tasks, err := handler.taskService.FindAllByProjectID(taskProjectIds.Ids)
 	if err != nil {
-		w.Write([]byte(err.Error()))
+		w.Write(delivery.NewHttpError(http.StatusInternalServerError, err.Error()))
 		return
 	}
-
 	json.NewEncoder(w).Encode(tasks)
-
 }
 
 //HandleTaskRoutes all routing for task struct
 func (handler *TaskHandler) HandleTaskRoutes() {
 	handler.router.HandleFunc("/task/create", handler.createNewTask).Methods("GET")
-	handler.router.HandleFunc("/task/project", handler.FindAllTaskByProjectID).Methods("GET")
+	handler.router.HandleFunc("/task/{id}", handler.FindByID).Methods("GET")
+	handler.router.HandleFunc("/task/creaupdatete", handler.Update).Methods("GET")
+	handler.router.HandleFunc("/task/delete/{id}", handler.Delete).Methods("GET")
+	handler.router.HandleFunc("/task/project/{id}", handler.FindAllTaskByProjectID).Methods("GET")
 }

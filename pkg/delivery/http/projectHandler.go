@@ -2,9 +2,11 @@ package delivery
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/GirigiriG/Clean-Architecture-golang/pkg/delivery"
+	"github.com/GirigiriG/Clean-Architecture-golang/tools"
 
 	"github.com/GirigiriG/Clean-Architecture-golang/pkg/domain/project"
 	"github.com/gorilla/mux"
@@ -22,19 +24,18 @@ func NewProjectHandler(service *project.Service, r *mux.Router) *ProjectHandler 
 	}
 }
 
-func (handler *ProjectHandler) GetProjectByID(w http.ResponseWriter, r *http.Request) {
-
-}
-
 func (handler *ProjectHandler) CreateNewProjejct(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 	newProject := &project.Project{}
 	err := json.NewDecoder(r.Body).Decode(newProject)
 
 	if err != nil {
-		panic(err)
+		w.Write(delivery.NewHttpError(http.StatusBadRequest, err.Error()))
+		return
 	}
 
 	newProject, err = project.NewProject(newProject)
+	fmt.Printf("%+v\n", newProject)
 
 	if err != nil {
 		w.Write(delivery.NewHttpError(http.StatusBadRequest, err.Error()))
@@ -47,23 +48,60 @@ func (handler *ProjectHandler) CreateNewProjejct(w http.ResponseWriter, r *http.
 		return
 	}
 
-	newProject, err = handler.projectService.GetProjectByID(newProject.ID)
 	if err != nil {
 		w.Write(delivery.NewHttpError(http.StatusBadRequest, err.Error()))
+		return
 	}
 
 	json.NewEncoder(w).Encode(newProject)
+}
+
+func (handler *ProjectHandler) GetProjectByID(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	ID := tools.GetParam("id", r)
+
+	resutls, err := handler.projectService.GetProjectByID(ID)
+	if err != nil {
+		w.Write(delivery.NewHttpError(http.StatusInternalServerError, err.Error()))
+		return
+	}
+
+	json.NewEncoder(w).Encode(resutls)
 
 }
 
 func (handler *ProjectHandler) DeleteProjectByID(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	ID := tools.GetParam("id", r)
 
+	if err := handler.projectService.DeleteProjectByID(ID); err != nil {
+		w.Write(delivery.NewHttpError(http.StatusInternalServerError, err.Error()))
+		return
+	}
 }
 
 func (handler *ProjectHandler) UpdateProjectByID(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 
+	recordToUpdate := &project.Project{}
+	err := json.NewDecoder(r.Body).Decode(recordToUpdate)
+
+	if err != nil {
+		w.Write(delivery.NewHttpError(http.StatusBadRequest, err.Error()))
+		return
+	}
+
+	resutls, err := handler.projectService.UpdateProjectByID(recordToUpdate)
+	if err != nil {
+		w.Write(delivery.NewHttpError(http.StatusInternalServerError, err.Error()))
+		return
+	}
+	json.NewEncoder(w).Encode(resutls)
 }
 
 func (handler *ProjectHandler) HandleProjectRoutes() {
 	handler.router.HandleFunc("/project/create", handler.CreateNewProjejct).Methods("GET")
+	handler.router.HandleFunc("/project/{id}", handler.GetProjectByID).Methods("GET")
+	handler.router.HandleFunc("/project/delete/{id}", handler.DeleteProjectByID).Methods("GET")
+	handler.router.HandleFunc("/project/update/", handler.UpdateProjectByID).Methods("GET")
 }

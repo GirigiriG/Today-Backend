@@ -58,16 +58,35 @@ func (repo *newProjectRepository) GetProjectByID(ID string) (*Project, error) {
 }
 
 //UpdateProjectByID update a project record by id
-func (repo *newProjectRepository) UpdateProjectByID(newProjectRecord *Project) (*Project, error) {
-	return nil, nil
+func (repo *newProjectRepository) UpdateProjectByID(p *Project) error {
+	query := `
+		UPDATE project 
+		SET project_name=$1, status=$2, last_modified_date=$3, description=$4, percent_complete=$5, sprint_id=$6
+		WHERE id=$7`
+
+	results, err := repo.database.Exec(query, p.ProjectName, p.Status, p.LastModifiedDate, p.Description, p.PercentComplete, p.SprintID, p.ID)
+	if err != nil {
+		return err
+	}
+
+	n, _ := results.RowsAffected()
+	if n == 0 {
+		return fmt.Errorf("Record not found.\n")
+	}
+	return nil
 }
 
 //DeleteProjectByID delete project record by id
 func (repo *newProjectRepository) DeleteProjectByID(ID string) error {
-	query := "`DELETE FROM project WHERE id = $1`"
-	_, err := repo.database.Exec(query, ID)
+	query := `DELETE FROM project WHERE id = $1`
+	results, err := repo.database.Exec(query, ID)
 	if err != nil {
 		return err
 	}
+	n, _ := results.RowsAffected()
+	if n == 0 {
+		return fmt.Errorf("Record not found.\n")
+	}
+
 	return nil
 }

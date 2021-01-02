@@ -2,8 +2,9 @@ package task
 
 //Repository for task object
 type Repository interface {
-	CreateTask(*Task) error
-	DeleteTaskByID(string) error
-	FindTaskByID(string) (*Task, error)
-	FindAllTaskByProjectID([]string) ([]Task, error)
+	Create(*Task) error
+	Update(*Task) error
+	DeleteByID(string) error
+	FindByID(string) (*Task, error)
+	FindAllByProjectID([]string) ([]Task, error)
 }

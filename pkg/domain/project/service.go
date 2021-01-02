@@ -1,5 +1,7 @@
 package project
 
+import "github.com/GirigiriG/Clean-Architecture-golang/tools"
+
 type Service struct {
 	repo Repository
 }
@@ -20,6 +22,7 @@ func (service *Service) GetProjectByID(ID string) (*Project, error) {
 }
 
 func (service *Service) CreateNewProjejct(newProject *Project) error {
+	newProject.ID = tools.CreateUUID()
 	err := service.repo.CreateNewProjejct(newProject)
 	if err != nil {
 		return err
@@ -37,9 +40,14 @@ func (service *Service) DeleteProjectByID(ID string) error {
 }
 
 func (service *Service) UpdateProjectByID(recordToUpdate *Project) (*Project, error) {
-	result, err := service.repo.UpdateProjectByID(recordToUpdate)
+	recordToUpdate, err := UpdateProject(recordToUpdate)
 	if err != nil {
 		return nil, err
 	}
-	return result, nil
+
+	err = service.repo.UpdateProjectByID(recordToUpdate)
+	if err != nil {
+		return nil, err
+	}
+	return recordToUpdate, nil
 }
