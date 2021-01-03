@@ -1,4 +1,4 @@
-package googleoauth
+package auth
 
 import (
 	"os"

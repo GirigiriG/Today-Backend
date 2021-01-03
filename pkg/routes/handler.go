@@ -7,15 +7,13 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/GirigiriG/Clean-Architecture-golang/pkg/auth"
 	"github.com/GirigiriG/Clean-Architecture-golang/pkg/domain/sprint"
 
 	"github.com/GirigiriG/Clean-Architecture-golang/pkg/domain/project"
 
 	"github.com/GirigiriG/Clean-Architecture-golang/pkg/domain/task"
 
-	middleware "github.com/GirigiriG/Clean-Architecture-golang/middlerware"
-
-	googleoauth "github.com/GirigiriG/Clean-Architecture-golang/pkg"
 	"golang.org/x/oauth2"
 
 	delivery "github.com/GirigiriG/Clean-Architecture-golang/pkg/delivery/http"
@@ -59,12 +57,12 @@ func HandleRoutes(db *sql.DB, router *mux.Router) {
 
 	router.HandleFunc("/secret", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
-		if r.FormValue("state") != googleoauth.RandomState {
+		if r.FormValue("state") != auth.RandomState {
 			fmt.Println("State is not valid")
 			http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 			return
 		}
-		token, err := googleoauth.GoogleOauthConfig.Exchange(oauth2.NoContext, r.FormValue("code"))
+		token, err := auth.GoogleOauthConfig.Exchange(oauth2.NoContext, r.FormValue("code"))
 
 		if !token.Valid() {
 			fmt.Printf("Could not obtain token: %s", err.Error())
@@ -88,10 +86,10 @@ func HandleRoutes(db *sql.DB, router *mux.Router) {
 			return
 		}
 
-		var googleResp *googleoauth.GoogleAuthResponse
+		var googleResp *auth.GoogleAuthResponse
 
 		json.Unmarshal(content, &googleResp)
-		googleResp.Token = middleware.GenerateJWToken()
+		googleResp.Token = auth.GenerateJWToken()
 		json.NewEncoder(w).Encode(googleResp)
 
 		result, err := json.Marshal(googleResp)
