@@ -34,14 +34,14 @@ func (handler *SprintHandler) Create(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(s)
 	if err != nil {
 		fmt.Println(err.Error())
-		w.Write(NewHttpError(http.StatusBadRequest, "Bad request"))
+		w.Write(NewHTTPError(http.StatusBadRequest, "Bad request"))
 		return
 	}
 
 	s, err = handler.service.Create(s)
 
 	if err != nil {
-		w.Write(NewHttpError(http.StatusBadRequest, err.Error()))
+		w.Write(NewHTTPError(http.StatusBadRequest, err.Error()))
 		return
 	}
 	json.NewEncoder(w).Encode(s)
@@ -52,11 +52,15 @@ func (handler *SprintHandler) Create(w http.ResponseWriter, r *http.Request) {
 func (handler *SprintHandler) FindByID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	ID := tools.GetParam("id", r)
+	if len(ID) != LengthOfUUID {
+		w.Write(NewHTTPError(http.StatusBadRequest, "Bad request"))
+		return
+	}
 
 	record, err := handler.service.FindByID(ID)
 	if err != nil {
 
-		w.Write(NewHttpError(http.StatusNotFound, "Record not found"))
+		w.Write(NewHTTPError(http.StatusNotFound, "Record not found"))
 		return
 	}
 	json.NewEncoder(w).Encode(record)
@@ -71,13 +75,18 @@ func (handler *SprintHandler) UpdateByID(w http.ResponseWriter, r *http.Request)
 
 	err := json.NewDecoder(r.Body).Decode(s)
 	if err != nil {
-		w.Write(NewHttpError(http.StatusBadRequest, "Bad request"))
+		w.Write(NewHTTPError(http.StatusBadRequest, "Bad request"))
+		return
+	}
+
+	if len(s.ID) != LengthOfUUID {
+		w.Write(NewHTTPError(http.StatusBadRequest, "Bad request"))
 		return
 	}
 
 	s, err = handler.service.Update(s)
 	if err != nil {
-		w.Write(NewHttpError(http.StatusBadRequest, "Bad request"))
+		w.Write(NewHTTPError(http.StatusBadRequest, "Bad request"))
 		return
 	}
 
@@ -89,14 +98,19 @@ func (handler *SprintHandler) DeleteByID(w http.ResponseWriter, r *http.Request)
 	w.Header().Set("Content-Type", "application/json")
 	ID := tools.GetParam("id", r)
 
-	err := handler.service.DeleteByID(ID)
-	if err != nil {
-
-		w.Write(NewHttpError(http.StatusNotFound, "Record not found"))
+	if len(ID) != LengthOfUUID {
+		w.Write(NewHTTPError(http.StatusBadRequest, "Bad request"))
 		return
 	}
 
-	w.Write(NewHttpError(http.StatusOK, "Record "+ID+" successfully deleted"))
+	err := handler.service.DeleteByID(ID)
+	if err != nil {
+
+		w.Write(NewHTTPError(http.StatusNotFound, "Record not found"))
+		return
+	}
+
+	w.Write(NewHTTPError(http.StatusOK, "Record "+ID+" successfully deleted"))
 }
 
 //HandleRoutes : routing service for sprint record

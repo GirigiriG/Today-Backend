@@ -9,7 +9,8 @@ type httpError struct {
 	Description string
 }
 
-func NewHttpError(code int, desc string) []byte {
+//NewHTTPError : returns http status and error message
+func NewHTTPError(code int, desc string) []byte {
 	httpErr := httpError{Code: code, Description: desc}
 	bs, err := json.Marshal(httpErr)
 	if err != nil {
@@ -17,3 +18,8 @@ func NewHttpError(code int, desc string) []byte {
 	}
 	return bs
 }
+
+const (
+	//LengthOfUUID : The leinght of a UUID
+	LengthOfUUID = 36
+)

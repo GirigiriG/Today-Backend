@@ -34,13 +34,13 @@ func (handler *UserHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(record)
 	if err != nil {
-		w.Write(NewHttpError(http.StatusBadRequest, "Bad Request"))
+		w.Write(NewHTTPError(http.StatusBadRequest, "Bad Request"))
 		return
 	}
 
 	u, err := handler.userService.Create(record)
 	if err != nil {
-		w.Write(NewHttpError(http.StatusBadRequest, err.Error()))
+		w.Write(NewHTTPError(http.StatusBadRequest, err.Error()))
 		return
 	}
 
@@ -56,14 +56,19 @@ func (handler *UserHandler) Update(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(record)
 	if err != nil {
-		w.Write(NewHttpError(http.StatusBadRequest, "Bad Request"))
+		w.Write(NewHTTPError(http.StatusBadRequest, "Bad Request"))
+		return
+	}
+
+	if len(record.ID) != LengthOfUUID {
+		w.Write(NewHTTPError(http.StatusBadRequest, "Bad request"))
 		return
 	}
 
 	u, err := handler.userService.UpdateByID(record)
 
 	if err != nil {
-		w.Write(NewHttpError(http.StatusBadRequest, err.Error()))
+		w.Write(NewHTTPError(http.StatusBadRequest, err.Error()))
 		return
 	}
 
@@ -74,10 +79,14 @@ func (handler *UserHandler) Update(w http.ResponseWriter, r *http.Request) {
 func (handler *UserHandler) FindByID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	ID := tools.GetParam("id", r)
+	if len(ID) != LengthOfUUID {
+		w.Write(NewHTTPError(http.StatusBadRequest, "Bad request"))
+		return
+	}
 
 	u, err := handler.userService.FindByID(ID)
 	if err != nil {
-		w.Write(NewHttpError(http.StatusNotFound, err.Error()))
+		w.Write(NewHTTPError(http.StatusNotFound, err.Error()))
 		return
 	}
 
@@ -88,10 +97,15 @@ func (handler *UserHandler) deleteByID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	ID := tools.GetParam("id", r)
 
+	if len(ID) != LengthOfUUID {
+		w.Write(NewHTTPError(http.StatusBadRequest, "Bad request"))
+		return
+	}
+
 	err := handler.userService.DeleteByID(ID)
 
 	if err != nil {
-		w.Write(NewHttpError(http.StatusNotFound, err.Error()))
+		w.Write(NewHTTPError(http.StatusNotFound, err.Error()))
 		return
 	}
 }

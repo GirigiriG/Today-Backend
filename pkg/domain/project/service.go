@@ -12,8 +12,8 @@ func NewProjectService(repo Repository) *Service {
 	}
 }
 
-func (service *Service) GetProjectByID(ID string) (*Project, error) {
-	result, err := service.repo.GetProjectByID(ID)
+func (service *Service) FindByID(ID string) (*Project, error) {
+	result, err := service.repo.FindByID(ID)
 	if err != nil {
 		return nil, err
 	}
@@ -21,9 +21,9 @@ func (service *Service) GetProjectByID(ID string) (*Project, error) {
 
 }
 
-func (service *Service) CreateNewProjejct(newProject *Project) error {
+func (service *Service) Create(newProject *Project) error {
 	newProject.ID = tools.GenerateStringUUID()
-	err := service.repo.CreateNewProjejct(newProject)
+	err := service.repo.Create(newProject)
 	if err != nil {
 		return err
 	}
@@ -31,21 +31,21 @@ func (service *Service) CreateNewProjejct(newProject *Project) error {
 	return nil
 }
 
-func (service *Service) DeleteProjectByID(ID string) error {
-	err := service.repo.DeleteProjectByID(ID)
+func (service *Service) DeleteByID(ID string) error {
+	err := service.repo.DeleteByID(ID)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (service *Service) UpdateProjectByID(recordToUpdate *Project) (*Project, error) {
+func (service *Service) UpdateByID(recordToUpdate *Project) (*Project, error) {
 	recordToUpdate, err := UpdateProject(recordToUpdate)
 	if err != nil {
 		return nil, err
 	}
 
-	err = service.repo.UpdateProjectByID(recordToUpdate)
+	err = service.repo.UpdateByID(recordToUpdate)
 	if err != nil {
 		return nil, err
 	}

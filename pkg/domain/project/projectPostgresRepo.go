@@ -21,7 +21,7 @@ func NewProjectRepo(db *sql.DB) Repository {
 }
 
 //CreateNewProjejct create new project record
-func (repo *newProjectRepository) CreateNewProjejct(p *Project) error {
+func (repo *newProjectRepository) Create(p *Project) error {
 	query := fmt.Sprintf(`INSERT INTO project 
 		(%s)
 		VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)`, allFields)
@@ -37,8 +37,8 @@ func (repo *newProjectRepository) CreateNewProjejct(p *Project) error {
 	return nil
 }
 
-//GetProjectByID get a project by id
-func (repo *newProjectRepository) GetProjectByID(ID string) (*Project, error) {
+//GetByID get a project by id
+func (repo *newProjectRepository) FindByID(ID string) (*Project, error) {
 	query := fmt.Sprintf(`SELECT * FROM project WHERE id = $1`)
 
 	rows, err := repo.database.Query(query, &ID)
@@ -57,8 +57,8 @@ func (repo *newProjectRepository) GetProjectByID(ID string) (*Project, error) {
 	return p, nil
 }
 
-//UpdateProjectByID update a project record by id
-func (repo *newProjectRepository) UpdateProjectByID(p *Project) error {
+//UpdateByID update a project record by id
+func (repo *newProjectRepository) UpdateByID(p *Project) error {
 	query := `
 		UPDATE project 
 		SET project_name=$1, status=$2, last_modified_date=$3, description=$4, percent_complete=$5, sprint_id=$6
@@ -71,13 +71,13 @@ func (repo *newProjectRepository) UpdateProjectByID(p *Project) error {
 
 	n, _ := results.RowsAffected()
 	if n == 0 {
-		return fmt.Errorf("Record not found.\n")
+		return fmt.Errorf("Record not found")
 	}
 	return nil
 }
 
-//DeleteProjectByID delete project record by id
-func (repo *newProjectRepository) DeleteProjectByID(ID string) error {
+//DeleteByID delete project record by id
+func (repo *newProjectRepository) DeleteByID(ID string) error {
 	query := `DELETE FROM project WHERE id = $1`
 	results, err := repo.database.Exec(query, ID)
 	if err != nil {
@@ -85,7 +85,7 @@ func (repo *newProjectRepository) DeleteProjectByID(ID string) error {
 	}
 	n, _ := results.RowsAffected()
 	if n == 0 {
-		return fmt.Errorf("Record not found.\n")
+		return fmt.Errorf("record not found")
 	}
 
 	return nil
