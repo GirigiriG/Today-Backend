@@ -22,6 +22,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
+//HandleRoutes all entity routes
 func HandleRoutes(db *sql.DB, router *mux.Router) {
 
 	//unprotected routes

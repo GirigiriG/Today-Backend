@@ -4,13 +4,10 @@ import (
 	"log"
 	"net/http"
 
+	repository "github.com/GirigiriG/Clean-Architecture-golang/pkg/repository/postgres"
 	"github.com/GirigiriG/Clean-Architecture-golang/pkg/routes"
 
-	repository "github.com/GirigiriG/Clean-Architecture-golang/pkg/repository/postgres"
-
 	"github.com/gorilla/mux"
-
-	_ "github.com/lib/pq"
 )
 
 func main() {

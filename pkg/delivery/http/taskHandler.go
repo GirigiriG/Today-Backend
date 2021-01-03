@@ -103,13 +103,24 @@ func (handler *TaskHandler) Delete(w http.ResponseWriter, r *http.Request) {
 //FindAllTaskByProjectID get all task from slice of project Ids
 func (handler *TaskHandler) FindAllTaskByProjectID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-
+	ID := tools.GetParam("id", r)
 	type projectIds struct {
 		Ids []string
 	}
-	defer r.Body.Close()
 
 	taskProjectIds := &projectIds{}
+	defer r.Body.Close()
+
+	if len(ID) != 0 {
+		tasks, err := handler.service.FindAllByProjectID([]string{ID})
+		if err != nil {
+			w.Write(NewHttpError(http.StatusInternalServerError, err.Error()))
+			return
+		}
+		json.NewEncoder(w).Encode(tasks)
+		return
+	}
+
 	if err := json.NewDecoder(r.Body).Decode(taskProjectIds); err != nil {
 		w.Write(NewHttpError(http.StatusInternalServerError, err.Error()))
 	}
@@ -128,5 +139,6 @@ func (handler *TaskHandler) HandleRoutes() {
 	handler.router.HandleFunc("/task/find/{id}", handler.FindByID).Methods("GET")
 	handler.router.HandleFunc("/task/update", handler.Update).Methods("POST")
 	handler.router.HandleFunc("/task/delete/{id}", handler.Delete).Methods("GET")
-	handler.router.HandleFunc("/task/project/{id}", handler.FindAllTaskByProjectID).Methods("GET")
+	handler.router.HandleFunc("/task/projects/{id}", handler.FindAllTaskByProjectID).Methods("GET")
+	handler.router.HandleFunc("/task/projects/", handler.FindAllTaskByProjectID).Methods("GET")
 }
