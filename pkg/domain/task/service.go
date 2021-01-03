@@ -1,6 +1,6 @@
 package task
 
-import "github.com/GirigiriG/Clean-Architecture-golang/tools"
+import "github.com/GirigiriG/Clean-Architecture-golang/pkg/tools"
 
 //Service hold taks and repo
 type Service struct {
@@ -23,7 +23,7 @@ func (s *Service) Create(t *Task) (*Task, error) {
 		return nil, err
 	}
 
-	taskToCreate.ID = tools.CreateUUID()
+	taskToCreate.ID = tools.GenerateStringUUID()
 
 	err = s.repo.Create(taskToCreate)
 	if err != nil {

@@ -4,9 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/GirigiriG/Clean-Architecture-golang/tools"
-
-	"github.com/GirigiriG/Clean-Architecture-golang/pkg/delivery"
+	"github.com/GirigiriG/Clean-Architecture-golang/pkg/tools"
 
 	"github.com/GirigiriG/Clean-Architecture-golang/pkg/domain/task"
 	"github.com/gorilla/mux"
@@ -14,15 +12,15 @@ import (
 
 //TaskHandler struct
 type TaskHandler struct {
-	taskService *task.Service
-	router      *mux.Router
+	service *task.Service
+	router  *mux.Router
 }
 
 //NewTaskHandler requires http router and service
 func NewTaskHandler(service *task.Service, router *mux.Router) *TaskHandler {
 	return &TaskHandler{
-		taskService: service,
-		router:      router,
+		service: service,
+		router:  router,
 	}
 }
 
@@ -34,19 +32,20 @@ func (handler *TaskHandler) createNewTask(w http.ResponseWriter, r *http.Request
 	t := &task.Task{}
 	err := json.NewDecoder(r.Body).Decode(t)
 	if err != nil {
-		w.Write(delivery.NewHttpError(http.StatusBadRequest, "Bad request."))
+		w.Write(NewHttpError(http.StatusBadRequest, "Bad request."))
 		return
 	}
 
-	t, err = handler.taskService.Create(t)
+	t, err = handler.service.Create(t)
 	if err != nil {
-		w.Write(delivery.NewHttpError(http.StatusBadRequest, "Bad request."))
+		w.Write(NewHttpError(http.StatusBadRequest, "Bad request."))
 		return
 	}
 
 	json.NewEncoder(w).Encode(t)
 }
 
+//FindByID : task by record id
 func (handler *TaskHandler) FindByID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	t := &task.Task{}
@@ -54,34 +53,51 @@ func (handler *TaskHandler) FindByID(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(t)
 	if err != nil {
-		w.Write(delivery.NewHttpError(http.StatusBadRequest, "Bad request."))
+		w.Write(NewHttpError(http.StatusBadRequest, "Bad request."))
 		return
 	}
 
-	t, err = handler.taskService.FindByID(t.ID)
+	t, err = handler.service.FindByID(t.ID)
 
 	if err := json.NewDecoder(r.Body).Decode(t); err != nil {
-		w.Write(delivery.NewHttpError(http.StatusNotFound, "Record not found."))
+		w.Write(NewHttpError(http.StatusNotFound, "Record not found."))
 		return
 	}
 
 	json.NewEncoder(w).Encode(t)
-
 }
 
+//Update : update task record
 func (handler *TaskHandler) Update(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	t := &task.Task{}
+	defer r.Body.Close()
+
+	err := json.NewDecoder(r.Body).Decode(t)
+	if err != nil {
+		w.Write(NewHttpError(http.StatusBadRequest, "Bad request"))
+		return
+	}
+
+	t, err = handler.service.Update(t)
+	if err != nil {
+		w.Write(NewHttpError(http.StatusNotFound, "Record not found."))
+		return
+	}
+
+	json.NewEncoder(w).Encode(t)
 }
 
+//Delete :  task record by id
 func (handler *TaskHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	ID := tools.GetParam("id", r)
 
-	if err := handler.taskService.DeleteByID(ID); err != nil {
-		w.Write(delivery.NewHttpError(http.StatusNotFound, "Record not found."))
+	if err := handler.service.DeleteByID(ID); err != nil {
+		w.Write(NewHttpError(http.StatusNotFound, "Record not found."))
 		return
 	}
-	w.Write(delivery.NewHttpError(http.StatusOK, "Ok"))
+	w.Write(NewHttpError(http.StatusOK, "Ok"))
 }
 
 //FindAllTaskByProjectID get all task from slice of project Ids
@@ -95,22 +111,22 @@ func (handler *TaskHandler) FindAllTaskByProjectID(w http.ResponseWriter, r *htt
 
 	taskProjectIds := &projectIds{}
 	if err := json.NewDecoder(r.Body).Decode(taskProjectIds); err != nil {
-		w.Write(delivery.NewHttpError(http.StatusInternalServerError, err.Error()))
+		w.Write(NewHttpError(http.StatusInternalServerError, err.Error()))
 	}
 
-	tasks, err := handler.taskService.FindAllByProjectID(taskProjectIds.Ids)
+	tasks, err := handler.service.FindAllByProjectID(taskProjectIds.Ids)
 	if err != nil {
-		w.Write(delivery.NewHttpError(http.StatusInternalServerError, err.Error()))
+		w.Write(NewHttpError(http.StatusInternalServerError, err.Error()))
 		return
 	}
 	json.NewEncoder(w).Encode(tasks)
 }
 
-//HandleTaskRoutes all routing for task struct
-func (handler *TaskHandler) HandleTaskRoutes() {
+//HandleRoutes : all routing for task struct
+func (handler *TaskHandler) HandleRoutes() {
 	handler.router.HandleFunc("/task/create", handler.createNewTask).Methods("GET")
-	handler.router.HandleFunc("/task/{id}", handler.FindByID).Methods("GET")
-	handler.router.HandleFunc("/task/creaupdatete", handler.Update).Methods("GET")
+	handler.router.HandleFunc("/task/find/{id}", handler.FindByID).Methods("GET")
+	handler.router.HandleFunc("/task/update", handler.Update).Methods("POST")
 	handler.router.HandleFunc("/task/delete/{id}", handler.Delete).Methods("GET")
 	handler.router.HandleFunc("/task/project/{id}", handler.FindAllTaskByProjectID).Methods("GET")
 }

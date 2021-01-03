@@ -4,9 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	middleware "github.com/GirigiriG/Clean-Architecture-golang/middlerware"
-
-	"github.com/GirigiriG/Clean-Architecture-golang/tools"
+	"github.com/GirigiriG/Clean-Architecture-golang/pkg/tools"
 
 	"github.com/GirigiriG/Clean-Architecture-golang/pkg/domain/user"
 	"github.com/gorilla/mux"
@@ -26,67 +24,82 @@ func NewUserHandler(userCase *user.Service, r *mux.Router) *UserHandler {
 	}
 }
 
-func (handler *UserHandler) getUserByID(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	ID := tools.GetParam("id", r)
-
-	u, err := handler.userService.GetUserByID(ID)
-
-	if err != nil {
-		handleError(err, w)
-		return
-	}
-	user, err := json.Marshal(u)
-	if err != nil {
-		panic(err)
-	}
-
-	json.NewEncoder(w).Encode(user)
-}
-
-func (handler *UserHandler) deleteUserByID(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	ID := tools.GetParam("id", r)
-
-	err := handler.userService.DeleteUserByID(ID)
-
-	if err != nil {
-		handleError(err, w)
-		return
-	}
-}
-
-func (handler *UserHandler) createNewUser(w http.ResponseWriter, r *http.Request) {
+//Create : create a new user record
+func (handler *UserHandler) Create(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	var newUser user.User
+	record := &user.User{}
 
 	defer r.Body.Close()
 
-	json.NewDecoder(r.Body).Decode(&newUser)
-	u, err := handler.userService.CreateNewUser(&newUser)
-
+	err := json.NewDecoder(r.Body).Decode(record)
 	if err != nil {
-		w.Write([]byte(err.Error()))
+		w.Write(NewHttpError(http.StatusBadRequest, "Bad Request"))
+		return
 	}
 
-	u, err = handler.userService.CreateNewUser(u)
+	u, err := handler.userService.Create(record)
 	if err != nil {
-		w.Write([]byte(err.Error()))
+		w.Write(NewHttpError(http.StatusBadRequest, err.Error()))
+		return
 	}
 
 	json.NewEncoder(w).Encode(u)
 
 }
 
-func handleError(e error, w http.ResponseWriter) {
-	errorMsg, _ := json.Marshal(e.Error())
-	w.Write(errorMsg)
+//Update register user service and http router
+func (handler *UserHandler) Update(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	record := &user.User{}
+	defer r.Body.Close()
+
+	err := json.NewDecoder(r.Body).Decode(record)
+	if err != nil {
+		w.Write(NewHttpError(http.StatusBadRequest, "Bad Request"))
+		return
+	}
+
+	u, err := handler.userService.UpdateByID(record)
+
+	if err != nil {
+		w.Write(NewHttpError(http.StatusBadRequest, err.Error()))
+		return
+	}
+
+	json.NewEncoder(w).Encode(u)
 }
 
-//HandleUserRoutes handler for user
-func (handler *UserHandler) HandleUserRoutes() {
-	handler.router.HandleFunc("/user/create", middleware.IsAuthorized(handler.createNewUser)).Methods("GET")
-	handler.router.HandleFunc("/user/{id}", middleware.IsAuthorized(handler.getUserByID)).Methods("GET")
-	handler.router.HandleFunc("/user/delete/{id}", handler.deleteUserByID).Methods("GET")
+//FindByID : get user by id
+func (handler *UserHandler) FindByID(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	ID := tools.GetParam("id", r)
+
+	u, err := handler.userService.FindByID(ID)
+	if err != nil {
+		w.Write(NewHttpError(http.StatusNotFound, err.Error()))
+		return
+	}
+
+	json.NewEncoder(w).Encode(u)
+}
+
+func (handler *UserHandler) deleteByID(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	ID := tools.GetParam("id", r)
+
+	err := handler.userService.DeleteByID(ID)
+
+	if err != nil {
+		w.Write(NewHttpError(http.StatusNotFound, err.Error()))
+		return
+	}
+}
+
+//HandleRoutes handler for user
+func (handler *UserHandler) HandleRoutes() {
+	handler.router.HandleFunc("/user/create", handler.Create).Methods("GET")
+	handler.router.HandleFunc("/user/find/{id}", handler.FindByID).Methods("GET")
+	handler.router.HandleFunc("/user/update", handler.Update).Methods("GET")
+	handler.router.HandleFunc("/user/delete/{id}", handler.deleteByID).Methods("GET")
 }

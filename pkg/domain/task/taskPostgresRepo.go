@@ -42,7 +42,6 @@ func (repo *repo) Create(t *Task) error {
 
 //DeleteTaskByID delete record by id
 func (repo *repo) DeleteByID(ID string) error {
-	fmt.Println(ID)
 	query := `DELETE FROM task WHERE id = $1`
 	Results, err := repo.database.Exec(query, ID)
 	n, _ := Results.RowsAffected()

@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/GirigiriG/Clean-Architecture-golang/tools"
+	"github.com/GirigiriG/Clean-Architecture-golang/pkg/tools"
 
 	"github.com/dgrijalva/jwt-go"
 )
@@ -19,7 +19,7 @@ func IsAuthorized(next func(w http.ResponseWriter, r *http.Request)) func(http.R
 		tokens := r.Header["Token"]
 
 		if len(tokens) == 0 {
-			
+
 			http.Redirect(w, r, "/", http.StatusForbidden)
 			return
 		}

@@ -1,6 +1,6 @@
 package project
 
-import "github.com/GirigiriG/Clean-Architecture-golang/tools"
+import "github.com/GirigiriG/Clean-Architecture-golang/pkg/tools"
 
 type Service struct {
 	repo Repository
@@ -22,7 +22,7 @@ func (service *Service) GetProjectByID(ID string) (*Project, error) {
 }
 
 func (service *Service) CreateNewProjejct(newProject *Project) error {
-	newProject.ID = tools.CreateUUID()
+	newProject.ID = tools.GenerateStringUUID()
 	err := service.repo.CreateNewProjejct(newProject)
 	if err != nil {
 		return err

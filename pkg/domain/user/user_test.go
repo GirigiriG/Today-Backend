@@ -1,7 +1,6 @@
 package user_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/GirigiriG/Clean-Architecture-golang/pkg/domain/user"
@@ -20,9 +19,6 @@ func Test_Firstname_Empty(t *testing.T) {
 	u := createTestData()
 	u.FirstName = ""
 	newUser, err := user.NewUser(u)
-
-	fmt.Println(user.FirstNameRequired)
-	fmt.Println(err.Error())
 
 	assert.Equal(t, user.FirstNameRequired, err.Error())
 	assert.Nil(t, newUser)

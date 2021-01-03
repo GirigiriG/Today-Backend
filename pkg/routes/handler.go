@@ -7,6 +7,8 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/GirigiriG/Clean-Architecture-golang/pkg/domain/sprint"
+
 	"github.com/GirigiriG/Clean-Architecture-golang/pkg/domain/project"
 
 	"github.com/GirigiriG/Clean-Architecture-golang/pkg/domain/task"
@@ -34,19 +36,26 @@ func HandleRoutes(db *sql.DB, router *mux.Router) {
 	userRepo := user.NewPostgressRepo(db)
 	userService := user.NewService(userRepo)
 	userRoutesHandler := delivery.NewUserHandler(userService, router)
-	userRoutesHandler.HandleUserRoutes()
+	userRoutesHandler.HandleRoutes()
 
 	//Task handler/service
 	taskRepo := task.NewTaskRepo(db)
 	taskService := task.NewTaskService(taskRepo)
 	taskeRouterHandler := delivery.NewTaskHandler(taskService, router)
-	taskeRouterHandler.HandleTaskRoutes()
+	taskeRouterHandler.HandleRoutes()
 
 	//Project handler/service
 	projectRepo := project.NewProjectRepo(db)
 	projectService := project.NewProjectService(projectRepo)
 	projectRouterHandler := delivery.NewProjectHandler(projectService, router)
-	projectRouterHandler.HandleProjectRoutes()
+	projectRouterHandler.HandleRoutes()
+
+	//Sprint handler/service
+
+	sprintRepo := sprint.NewSprintRepositroy(db)
+	sprintService := sprint.NewSprintService(sprintRepo)
+	sprintRouterHandler := delivery.NewSprintHandler(sprintService, router)
+	sprintRouterHandler.HandleRoutes()
 
 	router.HandleFunc("/secret", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")

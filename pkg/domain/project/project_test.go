@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/GirigiriG/Clean-Architecture-golang/tools"
+	"github.com/GirigiriG/Clean-Architecture-golang/pkg/tools"
 
 	"github.com/GirigiriG/Clean-Architecture-golang/pkg/domain/project"
 )
@@ -58,9 +58,9 @@ func Test_Project_Percentage_Must_Equal_100(t *testing.T) {
 }
 
 func createNewProjectTestData() *project.Project {
-	Id := tools.CreateUUID()
-	sprintRecordID := tools.CreateUUID()
-	createdBy := tools.CreateUUID()
+	Id := tools.GenerateStringUUID()
+	sprintRecordID := tools.GenerateStringUUID()
+	createdBy := tools.GenerateStringUUID()
 
 	return &project.Project{
 		ID:               Id,
