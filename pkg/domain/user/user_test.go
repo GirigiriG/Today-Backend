@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_createNewUser(t *testing.T) {
+func TestcreateNewUser(t *testing.T) {
 	u := createTestData()
 	newUser, err := user.NewUser(u)
 
@@ -15,7 +15,7 @@ func Test_createNewUser(t *testing.T) {
 	assert.NotNil(t, newUser)
 }
 
-func Test_Firstname_Empty(t *testing.T) {
+func TestFirstnameEmpty(t *testing.T) {
 	u := createTestData()
 	u.FirstName = ""
 	newUser, err := user.NewUser(u)
@@ -24,7 +24,7 @@ func Test_Firstname_Empty(t *testing.T) {
 	assert.Nil(t, newUser)
 }
 
-func Test_Lastname_Empty(t *testing.T) {
+func TestLastnameEmpty(t *testing.T) {
 	u := createTestData()
 	u.LastName = ""
 	newUser, err := user.NewUser(u)
@@ -33,7 +33,7 @@ func Test_Lastname_Empty(t *testing.T) {
 	assert.Nil(t, newUser)
 }
 
-func Test_Email_Empty(t *testing.T) {
+func TestEmailEmpty(t *testing.T) {
 	u := createTestData()
 	u.Email = ""
 

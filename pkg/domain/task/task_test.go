@@ -8,13 +8,13 @@ import (
 	"github.com/GirigiriG/Clean-Architecture-golang/pkg/domain/task"
 )
 
-func Test_CreateTaskRecord_Sucessfully(t *testing.T) {
+func TestCreateTaskRecordSucessfully(t *testing.T) {
 	newTask := createTaskRecord()
 	_, err := task.NewTask(newTask)
 	assert.Equal(t, nil, err)
 }
 
-func Test_Task_Name_Required(t *testing.T) {
+func TestNameRequired(t *testing.T) {
 	newTask := createTaskRecord()
 	newTask.TaskName = ""
 
@@ -23,7 +23,7 @@ func Test_Task_Name_Required(t *testing.T) {
 	assert.Equal(t, err.Error(), task.NameRequired)
 }
 
-func Test__Task_Owner_ID_Required(t *testing.T) {
+func TestOwnerIDRequired(t *testing.T) {
 	newTask := createTaskRecord()
 	newTask.OwnerID = ""
 
@@ -32,7 +32,7 @@ func Test__Task_Owner_ID_Required(t *testing.T) {
 	assert.Equal(t, err.Error(), task.OwnerIDRequired)
 }
 
-func Test__Task_Status_Required(t *testing.T) {
+func TestStatusRequired(t *testing.T) {
 	newTask := createTaskRecord()
 	newTask.Status = ""
 
@@ -41,7 +41,7 @@ func Test__Task_Status_Required(t *testing.T) {
 	assert.Equal(t, err.Error(), task.StatusRequired)
 }
 
-func Test__Task_Project_Id_Required(t *testing.T) {
+func TestProjectIdRequired(t *testing.T) {
 	newTask := createTaskRecord()
 	newTask.ProjectID = ""
 
@@ -50,7 +50,7 @@ func Test__Task_Project_Id_Required(t *testing.T) {
 	assert.Equal(t, err.Error(), task.ProjectIDRequired)
 }
 
-func Test__Task_Sprint_Id_Required(t *testing.T) {
+func TestSprintIdRequired(t *testing.T) {
 	newTask := createTaskRecord()
 	newTask.SprintID = ""
 
@@ -59,7 +59,7 @@ func Test__Task_Sprint_Id_Required(t *testing.T) {
 	assert.Equal(t, err.Error(), task.SprintIDRequired)
 }
 
-func Test__Task_Contains_Remainig_Hours(t *testing.T) {
+func TestContainsRemainigHours(t *testing.T) {
 	newTask := createTaskRecord()
 	newTask.Remaining = 3
 

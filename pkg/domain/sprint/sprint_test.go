@@ -12,7 +12,7 @@ import (
 	"github.com/GirigiriG/Clean-Architecture-golang/pkg/domain/sprint"
 )
 
-func Test_NewSprint_Creation_Success(t *testing.T) {
+func TestNewSprintCreationSuccess(t *testing.T) {
 	s := testData()
 	ID := tools.GenerateStringUUID()
 	_, err := sprint.NewSprint(s, ID)
@@ -20,7 +20,7 @@ func Test_NewSprint_Creation_Success(t *testing.T) {
 	assert.Equal(t, nil, err)
 }
 
-func Test_NewSprint_Creation_Failure(t *testing.T) {
+func TestNewSprintCreationFailure(t *testing.T) {
 	s := testData()
 	s.SprintName = ""
 
@@ -30,7 +30,7 @@ func Test_NewSprint_Creation_Failure(t *testing.T) {
 	assert.Equal(t, sprint.SprintNameIsRquired, err.Error())
 }
 
-func Test_NewSprint_StartDate_Required(t *testing.T) {
+func TestNewSprintStartDateRequired(t *testing.T) {
 	s := &sprint.Sprint{}
 	ID := tools.GenerateStringUUID()
 	s.StartDate = time.Now().Add(67 * 60)
@@ -41,7 +41,7 @@ func Test_NewSprint_StartDate_Required(t *testing.T) {
 	assert.Equal(t, sprint.SprintNameIsRquired, err.Error())
 }
 
-func Test_NewSprint_StartDate_Greater_Or_Equal_Now(t *testing.T) {
+func TestNewSprintStartDateGreaterOrEqualNow(t *testing.T) {
 	s := &sprint.Sprint{}
 
 	s.SprintName = "test"
@@ -53,7 +53,7 @@ func Test_NewSprint_StartDate_Greater_Or_Equal_Now(t *testing.T) {
 	assert.Equal(t, sprint.StartDateMustBeTodayOrGreater, err.Error())
 }
 
-func Test_NewSprint_EndDate_Required(t *testing.T) {
+func TestNewSprintEndDateRequired(t *testing.T) {
 	s := testData()
 	s.EndDate = time.Time{}
 
@@ -62,7 +62,7 @@ func Test_NewSprint_EndDate_Required(t *testing.T) {
 	assert.Equal(t, sprint.EndDatedIsRquired, err.Error())
 }
 
-func Test_NewSprint_EndDate_After_StartDate(t *testing.T) {
+func TestNewSprintEndDateAfterStartDate(t *testing.T) {
 	s := testData()
 
 	ID := tools.GenerateStringUUID()

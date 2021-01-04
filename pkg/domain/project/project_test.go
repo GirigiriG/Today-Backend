@@ -11,14 +11,14 @@ import (
 	"github.com/GirigiriG/Clean-Architecture-golang/pkg/domain/project"
 )
 
-func Test_Create_Project_Record_Successfully(t *testing.T) {
+func TestCreateProjectRecordSuccessfully(t *testing.T) {
 	newProjectRecord := createNewProjectTestData()
 
 	_, err := project.NewProject(newProjectRecord)
 	assert.NoError(t, err)
 }
 
-func Test_Project_Name_Required(t *testing.T) {
+func TestProjectNameRequired(t *testing.T) {
 	newProjectRecord := createNewProjectTestData()
 	newProjectRecord.ProjectName = ""
 
@@ -28,7 +28,7 @@ func Test_Project_Name_Required(t *testing.T) {
 	assert.Equal(t, project.ProjectNameRequired, err.Error())
 }
 
-func Test_Status_Required(t *testing.T) {
+func TestStatusRequired(t *testing.T) {
 	newProjectRecord := createNewProjectTestData()
 	newProjectRecord.Status = ""
 
@@ -38,7 +38,7 @@ func Test_Status_Required(t *testing.T) {
 	assert.Equal(t, project.StatusRequired, err.Error())
 }
 
-func Test_Sprint_ID_Required(t *testing.T) {
+func TestSprintIDRequired(t *testing.T) {
 	newProjectRecord := createNewProjectTestData()
 	newProjectRecord.SprintID = ""
 
@@ -47,7 +47,7 @@ func Test_Sprint_ID_Required(t *testing.T) {
 	assert.Equal(t, project.SprintIDRequired, err.Error())
 }
 
-func Test_Project_Percentage_Must_Equal_100(t *testing.T) {
+func TestProjectPercentageMustEqual100(t *testing.T) {
 	newProjectRecord := createNewProjectTestData()
 	newProjectRecord.Status = "Completed"
 	newProjectRecord.PercentComplete = 99
