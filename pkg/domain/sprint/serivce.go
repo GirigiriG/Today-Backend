@@ -19,8 +19,8 @@ func NewSprintService(database Repository) *Service {
 //Create : create a new sprint record and insert it to db
 func (s *Service) Create(newSprint *Sprint) (*Sprint, error) {
 
-	newSprint.ID = tools.GenerateStringUUID()
-	record, err := NewSprint(newSprint)
+	ID := tools.GenerateStringUUID()
+	record, err := NewSprint(newSprint, ID)
 	if err != nil {
 		return nil, err
 	}

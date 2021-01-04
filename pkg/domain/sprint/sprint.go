@@ -2,6 +2,7 @@ package sprint
 
 import (
 	"errors"
+	"fmt"
 	"time"
 )
 
@@ -31,10 +32,11 @@ type Sprint struct {
 }
 
 //NewSprint : creates a new s record if record is valid
-func NewSprint(s *Sprint) (*Sprint, error) {
+func NewSprint(s *Sprint, ID string) (*Sprint, error) {
 	if err := validate(s); err != nil {
 		return nil, err
 	}
+	s.ID = ID
 	s.CreatedDate = time.Now()
 	return s, nil
 }
@@ -53,6 +55,8 @@ func validate(s *Sprint) error {
 	if len(s.SprintName) == 0 {
 		return errors.New(SprintNameIsRquired)
 	}
+
+	fmt.Println(s.StartDate.IsZero())
 	if s.StartDate.IsZero() {
 		return errors.New(StartDatedIsRquired)
 	}
@@ -61,11 +65,11 @@ func validate(s *Sprint) error {
 		return errors.New(EndDatedIsRquired)
 	}
 
-	if s.StartDate.UnixNano() < time.Now().UnixNano() {
+	if !s.StartDate.Before(time.Now().Add(0 * time.Minute)) {
 		return errors.New(StartDateMustBeTodayOrGreater)
 	}
 
-	if s.EndDate.UnixNano() < s.StartDate.UnixNano() {
+	if !s.StartDate.Before(s.EndDate) {
 		return errors.New(EndDateIsGreaterThanStartDate)
 	}
 

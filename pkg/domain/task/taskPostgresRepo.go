@@ -9,7 +9,8 @@ import (
 )
 
 const (
-	NoRecordFound = "No record found"
+	//NoRecordFound : Record not found error message
+	NoRecordFound = "Record not found"
 )
 
 type repo struct {
@@ -50,7 +51,7 @@ func (repo *repo) DeleteByID(ID string) error {
 	}
 
 	if n == 0 {
-		return fmt.Errorf("Record not found.\n")
+		return fmt.Errorf(NoRecordFound)
 	}
 	return nil
 }
@@ -70,7 +71,7 @@ func (repo *repo) Update(t *Task) error {
 
 	n, _ := results.RowsAffected()
 	if n == 0 {
-		return fmt.Errorf("Record not found.\n")
+		return fmt.Errorf(NoRecordFound)
 	}
 	return nil
 }

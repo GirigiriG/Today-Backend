@@ -41,6 +41,7 @@ func (s *Service) DeleteByID(ID string) error {
 	return nil
 }
 
+//Update : Update task by id
 func (s *Service) Update(t *Task) (*Task, error) {
 	toUpdate, err := UpdateTask(t)
 	if err != nil {
@@ -52,7 +53,7 @@ func (s *Service) Update(t *Task) (*Task, error) {
 	return toUpdate, nil
 }
 
-//FindTaskByID find task record by ID
+//FindByID : Find task record by ID
 func (s *Service) FindByID(ID string) (*Task, error) {
 	result, err := s.repo.FindByID(ID)
 	if err != nil {
@@ -62,7 +63,7 @@ func (s *Service) FindByID(ID string) (*Task, error) {
 	return result, nil
 }
 
-//FindAllTaskByProjectID return all task by project the task IDs
+//FindAllByProjectID : Get all task by project the task IDs
 func (s *Service) FindAllByProjectID(IDs []string) ([]Task, error) {
 	results, err := s.repo.FindAllByProjectID(IDs)
 	if err != nil {

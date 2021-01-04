@@ -6,11 +6,17 @@ import (
 )
 
 const (
-	NameRequired                    = "Please provide a task name"
-	OwnerIDRequired                 = "Pleasae provided owner id"
-	StatusRequired                  = "Pleasae provided status"
-	ProjectIDRequired               = "Pleasae provided project id"
-	SprintIDRequired                = "Pleasae provided sprint id"
+	//NameRequired : Name required error messsage
+	NameRequired = "Please provide a task name"
+	//OwnerIDRequired : Owuner id required error messsage
+	OwnerIDRequired = "Pleasae provided owner id"
+	//StatusRequired : Status required error messsage
+	StatusRequired = "Pleasae provided status"
+	//ProjectIDRequired : Project id required error messsage
+	ProjectIDRequired = "Pleasae provided project id"
+	//SprintIDRequired : Sprint id required error messsage
+	SprintIDRequired = "Pleasae provided sprint id"
+	//RemainingHoursMustBeEqaulToZero : Task must have 0 hours remaining error message
 	RemainingHoursMustBeEqaulToZero = "This task still has remaining hours"
 )
 
@@ -50,6 +56,7 @@ func NewTask(t *Task) (*Task, error) {
 	}, nil
 }
 
+//UpdateTask update test record
 func UpdateTask(t *Task) (*Task, error) {
 	if err := validateNewTask(t); err != nil {
 		return nil, err
@@ -60,22 +67,22 @@ func UpdateTask(t *Task) (*Task, error) {
 
 func validateNewTask(t *Task) error {
 
-	if t.TaskName == "" {
+	if len(t.TaskName) == 0 {
 		return errors.New(NameRequired)
 	}
 
-	if t.OwnerID == "" {
+	if len(t.OwnerID) == 0 {
 		return errors.New(OwnerIDRequired)
 	}
 
-	if t.Status == "" {
+	if len(t.Status) == 0 {
 		return errors.New(StatusRequired)
 	}
 
-	if t.ProjectID == "" {
+	if len(t.ProjectID) == 0 {
 		return errors.New(ProjectIDRequired)
 	}
-	if t.SprintID == "" {
+	if len(t.SprintID) == 0 {
 		return errors.New(SprintIDRequired)
 	}
 
