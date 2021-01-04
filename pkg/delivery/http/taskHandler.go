@@ -32,12 +32,14 @@ func (handler *TaskHandler) createNewTask(w http.ResponseWriter, r *http.Request
 	t := &task.Task{}
 	err := json.NewDecoder(r.Body).Decode(t)
 	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
 		w.Write(NewHTTPError(http.StatusBadRequest, "Bad request."))
 		return
 	}
 
 	t, err = handler.service.Create(t)
 	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
 		w.Write(NewHTTPError(http.StatusBadRequest, "Bad request."))
 		return
 	}
@@ -53,11 +55,13 @@ func (handler *TaskHandler) FindByID(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(t)
 	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
 		w.Write(NewHTTPError(http.StatusBadRequest, "Bad request."))
 		return
 	}
 
 	if len(t.ID) != LengthOfUUID {
+		w.WriteHeader(http.StatusBadRequest)
 		w.Write(NewHTTPError(http.StatusBadRequest, "Bad request"))
 		return
 	}
@@ -65,6 +69,7 @@ func (handler *TaskHandler) FindByID(w http.ResponseWriter, r *http.Request) {
 	t, err = handler.service.FindByID(t.ID)
 
 	if err := json.NewDecoder(r.Body).Decode(t); err != nil {
+		w.WriteHeader(http.StatusNotFound)
 		w.Write(NewHTTPError(http.StatusNotFound, "Record not found."))
 		return
 	}
@@ -76,24 +81,30 @@ func (handler *TaskHandler) FindByID(w http.ResponseWriter, r *http.Request) {
 func (handler *TaskHandler) Update(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	t := &task.Task{}
+
 	defer r.Body.Close()
+
 	err := json.NewDecoder(r.Body).Decode(t)
 	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
 		w.Write(NewHTTPError(http.StatusBadRequest, "Bad request"))
 		return
 	}
 
 	if len(t.ID) != LengthOfUUID {
+		w.WriteHeader(http.StatusBadRequest)
 		w.Write(NewHTTPError(http.StatusBadRequest, "Bad request"))
 		return
 	}
 
 	t, err = handler.service.Update(t)
 	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
 		w.Write(NewHTTPError(http.StatusNotFound, "Record not found."))
 		return
 	}
 
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(t)
 }
 
@@ -103,13 +114,16 @@ func (handler *TaskHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	ID := tools.GetParam("id", r)
 
 	if len(ID) != LengthOfUUID {
+		w.WriteHeader(http.StatusBadRequest)
 		w.Write(NewHTTPError(http.StatusBadRequest, "Bad request"))
 		return
 	}
 	if err := handler.service.DeleteByID(ID); err != nil {
+		w.WriteHeader(http.StatusNotFound)
 		w.Write(NewHTTPError(http.StatusNotFound, "Record not found."))
 		return
 	}
+	w.WriteHeader(http.StatusOK)
 	w.Write(NewHTTPError(http.StatusOK, "Ok"))
 }
 
@@ -122,6 +136,7 @@ func (handler *TaskHandler) FindAllTaskByProjectID(w http.ResponseWriter, r *htt
 	}
 
 	if len(ID) != LengthOfUUID {
+		w.WriteHeader(http.StatusBadRequest)
 		w.Write(NewHTTPError(http.StatusBadRequest, "Bad request"))
 		return
 	}
@@ -132,11 +147,15 @@ func (handler *TaskHandler) FindAllTaskByProjectID(w http.ResponseWriter, r *htt
 	if len(ID) != 0 {
 		tasks, err := handler.service.FindAllByProjectID([]string{ID})
 		if err != nil {
-			w.Write(NewHTTPError(http.StatusInternalServerError, err.Error()))
+			w.WriteHeader(http.StatusNotFound)
+			w.Write(NewHTTPError(http.StatusNotFound, err.Error()))
 			return
 		}
-		json.NewEncoder(w).Encode(tasks)
-		return
+		if err := json.NewEncoder(w).Encode(tasks); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		w.WriteHeader(http.StatusOK)
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(taskProjectIds); err != nil {

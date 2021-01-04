@@ -85,11 +85,11 @@ func (handler *UserHandler) FindByID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	ID := tools.GetParam("id", r)
 
-	// if len(ID) != LengthOfUUID {
-	// 	w.WriteHeader(http.StatusBadRequest)
-	// 	w.Write(NewHTTPError(http.StatusBadRequest, "Bad request"))
-	// 	return
-	// }
+	if len(ID) != LengthOfUUID {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write(NewHTTPError(http.StatusBadRequest, "Bad request"))
+		return
+	}
 
 	u, err := handler.userService.FindByID(ID)
 	if err != nil {

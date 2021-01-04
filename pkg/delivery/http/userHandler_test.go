@@ -14,7 +14,7 @@ import (
 )
 
 func TestUserHandlerFind(t *testing.T) {
-	endPoint := "localhost:3000/user/find/123"
+	endPoint := "localhost:3000/user/find/89e8a24d-09cc-4ce6-b9b6-cc2908ab1542222"
 	req, err := http.NewRequest("GET", endPoint, nil)
 	if err != nil {
 		t.Errorf(err.Error())

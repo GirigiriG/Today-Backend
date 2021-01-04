@@ -2,7 +2,6 @@ package delivery
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/GirigiriG/Clean-Architecture-golang/pkg/tools"
@@ -33,7 +32,7 @@ func (handler *SprintHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(s)
 	if err != nil {
-		fmt.Println(err.Error())
+		w.WriteHeader(http.StatusBadRequest)
 		w.Write(NewHTTPError(http.StatusBadRequest, "Bad request"))
 		return
 	}
@@ -41,6 +40,7 @@ func (handler *SprintHandler) Create(w http.ResponseWriter, r *http.Request) {
 	s, err = handler.service.Create(s)
 
 	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
 		w.Write(NewHTTPError(http.StatusBadRequest, err.Error()))
 		return
 	}
@@ -53,13 +53,14 @@ func (handler *SprintHandler) FindByID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	ID := tools.GetParam("id", r)
 	if len(ID) != LengthOfUUID {
+		w.WriteHeader(http.StatusBadRequest)
 		w.Write(NewHTTPError(http.StatusBadRequest, "Bad request"))
 		return
 	}
 
 	record, err := handler.service.FindByID(ID)
 	if err != nil {
-
+		w.WriteHeader(http.StatusNotFound)
 		w.Write(NewHTTPError(http.StatusNotFound, "Record not found"))
 		return
 	}
@@ -75,17 +76,20 @@ func (handler *SprintHandler) UpdateByID(w http.ResponseWriter, r *http.Request)
 
 	err := json.NewDecoder(r.Body).Decode(s)
 	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
 		w.Write(NewHTTPError(http.StatusBadRequest, "Bad request"))
 		return
 	}
 
 	if len(s.ID) != LengthOfUUID {
+		w.WriteHeader(http.StatusBadRequest)
 		w.Write(NewHTTPError(http.StatusBadRequest, "Bad request"))
 		return
 	}
 
 	s, err = handler.service.Update(s)
 	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
 		w.Write(NewHTTPError(http.StatusBadRequest, "Bad request"))
 		return
 	}
@@ -99,17 +103,18 @@ func (handler *SprintHandler) DeleteByID(w http.ResponseWriter, r *http.Request)
 	ID := tools.GetParam("id", r)
 
 	if len(ID) != LengthOfUUID {
+		w.WriteHeader(http.StatusBadRequest)
 		w.Write(NewHTTPError(http.StatusBadRequest, "Bad request"))
 		return
 	}
 
 	err := handler.service.DeleteByID(ID)
 	if err != nil {
-
+		w.WriteHeader(http.StatusNotFound)
 		w.Write(NewHTTPError(http.StatusNotFound, "Record not found"))
 		return
 	}
-
+	w.WriteHeader(http.StatusOK)
 	w.Write(NewHTTPError(http.StatusOK, "Record "+ID+" successfully deleted"))
 }
 
