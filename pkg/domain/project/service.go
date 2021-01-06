@@ -13,11 +13,11 @@ func NewProjectService(repo Repository) *Service {
 }
 
 func (service *Service) FindByID(ID string) (*Project, error) {
-	result, err := service.repo.FindByID(ID)
+	record, err := service.repo.FindByID(ID)
 	if err != nil {
 		return nil, err
 	}
-	return result, nil
+	return record, nil
 
 }
 

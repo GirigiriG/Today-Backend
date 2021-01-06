@@ -1,6 +1,8 @@
 package task
 
-import "github.com/GirigiriG/Clean-Architecture-golang/pkg/tools"
+import (
+	"github.com/GirigiriG/Clean-Architecture-golang/pkg/tools"
+)
 
 //Service hold taks and repo
 type Service struct {
@@ -16,7 +18,7 @@ func NewTaskService(repo Repository) *Service {
 }
 
 //Create creates new task record
-func (s *Service) Create(t *Task) (*Task, error) {
+func (service *Service) Create(t *Task) (*Task, error) {
 
 	taskToCreate, err := NewTask(t)
 	if err != nil {
@@ -25,7 +27,7 @@ func (s *Service) Create(t *Task) (*Task, error) {
 
 	taskToCreate.ID = tools.GenerateStringUUID()
 
-	err = s.repo.Create(taskToCreate)
+	err = service.repo.Create(taskToCreate)
 	if err != nil {
 		return nil, err
 	}
@@ -34,40 +36,39 @@ func (s *Service) Create(t *Task) (*Task, error) {
 }
 
 //DeleteByID delete task record by ID
-func (s *Service) DeleteByID(ID string) error {
-	if err := s.repo.DeleteByID(ID); err != nil {
+func (service *Service) DeleteByID(ID string) error {
+	if err := service.repo.DeleteByID(ID); err != nil {
 		return err
 	}
 	return nil
 }
 
 //Update : Update task by id
-func (s *Service) Update(t *Task) (*Task, error) {
+func (service *Service) Update(t *Task) (*Task, error) {
 	toUpdate, err := UpdateTask(t)
 	if err != nil {
 		return nil, err
 	}
-	if err = s.repo.Update(t); err != nil {
+	if err = service.repo.Update(t); err != nil {
 		return nil, err
 	}
 	return toUpdate, nil
 }
 
 //FindByID : Find task record by ID
-func (s *Service) FindByID(ID string) (*Task, error) {
-	result, err := s.repo.FindByID(ID)
+func (service *Service) FindByID(ID string) (*Task, error) {
+	record, err := service.repo.FindByID(ID)
 	if err != nil {
 		return nil, err
 	}
-
-	return result, nil
+	return record, nil
 }
 
 //FindAllByProjectID : Get all task by project the task IDs
-func (s *Service) FindAllByProjectID(IDs []string) ([]Task, error) {
-	results, err := s.repo.FindAllByProjectID(IDs)
+func (service *Service) FindAllByProjectID(IDs []string) ([]Task, error) {
+	records, err := service.repo.FindAllByProjectID(IDs)
 	if err != nil {
 		return nil, err
 	}
-	return results, nil
+	return records, nil
 }

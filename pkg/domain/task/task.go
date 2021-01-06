@@ -25,6 +25,7 @@ type Task struct {
 	ID               string
 	TaskName         string
 	OwnerID          string
+	OwnerName        string
 	CreatedDate      time.Time
 	LastModifiedDate time.Time
 	Status           string

@@ -17,7 +17,7 @@ func NewSprintService(database Repository) *Service {
 }
 
 //Create : create a new sprint record and insert it to db
-func (s *Service) Create(newSprint *Sprint) (*Sprint, error) {
+func (service *Service) Create(newSprint *Sprint) (*Sprint, error) {
 
 	ID := tools.GenerateStringUUID()
 	record, err := NewSprint(newSprint, ID)
@@ -25,7 +25,7 @@ func (s *Service) Create(newSprint *Sprint) (*Sprint, error) {
 		return nil, err
 	}
 
-	err = s.repo.Create(record)
+	err = service.repo.Create(record)
 
 	if err != nil {
 		return nil, err
@@ -35,13 +35,13 @@ func (s *Service) Create(newSprint *Sprint) (*Sprint, error) {
 }
 
 //Update : update a new sprint record and insert it to db
-func (s *Service) Update(newSprint *Sprint) (*Sprint, error) {
+func (service *Service) Update(newSprint *Sprint) (*Sprint, error) {
 	record, err := UpdateSprint(newSprint)
 	if err != nil {
 		return nil, err
 	}
 
-	err = s.repo.Update(record)
+	err = service.repo.Update(record)
 
 	if err != nil {
 		return nil, err
@@ -51,16 +51,16 @@ func (s *Service) Update(newSprint *Sprint) (*Sprint, error) {
 }
 
 //DeleteByID : delete record by id
-func (s *Service) DeleteByID(ID string) error {
-	if err := s.repo.DeleteByID(ID); err != nil {
+func (service *Service) DeleteByID(ID string) error {
+	if err := service.repo.DeleteByID(ID); err != nil {
 		return err
 	}
 	return nil
 }
 
 //FindByID : get record by id
-func (s *Service) FindByID(ID string) (*Sprint, error) {
-	record, err := s.repo.FindByID(ID)
+func (service *Service) FindByID(ID string) (*Sprint, error) {
+	record, err := service.repo.FindByID(ID)
 	if err != nil {
 		return nil, err
 	}

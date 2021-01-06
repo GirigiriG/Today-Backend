@@ -31,11 +31,10 @@ CREATE TABLE task(
 	created_by VARCHAR(255) NOT NULL,
 	estimate INTEGER,
 	remaining INTEGER,
+	group_id VARCHAR(255),
 	project_id VARCHAR(255) NOT NULL REFERENCES project(id) DELETE CASCADE,
 	sprint_id VARCHAR(255) REFERENCES sprint(id)
-) 
-
--- create test data 
+) -- create test data 
 -- INSERT INTO Sprint(id,sprint_name,start_date,end_date)
 -- 	VALUES(777, 'sprint_x7', current_timestamp,current_timestamp);
 -- INSERT INTO project(id,project_name,created_by, status, created_date, last_modified_date, sprint_id) 

@@ -2,6 +2,7 @@ package delivery
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/GirigiriG/Clean-Architecture-golang/pkg/tools"
@@ -26,6 +27,7 @@ func NewTaskHandler(service *task.Service, router *mux.Router) *TaskHandler {
 
 func (handler *TaskHandler) createNewTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	defer r.Body.Close()
 
@@ -50,36 +52,24 @@ func (handler *TaskHandler) createNewTask(w http.ResponseWriter, r *http.Request
 //FindByID : task by record id
 func (handler *TaskHandler) FindByID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	t := &task.Task{}
-	defer r.Body.Close()
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	ID := tools.GetParam("id", r)
 
-	err := json.NewDecoder(r.Body).Decode(t)
+	t, err := handler.service.FindByID(ID)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write(NewHTTPError(http.StatusBadRequest, "Bad request."))
-		return
-	}
-
-	if len(t.ID) != LengthOfUUID {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write(NewHTTPError(http.StatusBadRequest, "Bad request"))
-		return
-	}
-
-	t, err = handler.service.FindByID(t.ID)
-
-	if err := json.NewDecoder(r.Body).Decode(t); err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write(NewHTTPError(http.StatusNotFound, "Record not found."))
 		return
 	}
-
+	
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(t)
 }
 
 //Update : update task record
 func (handler *TaskHandler) Update(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	t := &task.Task{}
 
 	defer r.Body.Close()
@@ -111,6 +101,7 @@ func (handler *TaskHandler) Update(w http.ResponseWriter, r *http.Request) {
 //Delete :  task record by id
 func (handler *TaskHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	ID := tools.GetParam("id", r)
 
 	if len(ID) != LengthOfUUID {
@@ -130,6 +121,7 @@ func (handler *TaskHandler) Delete(w http.ResponseWriter, r *http.Request) {
 //FindAllTaskByProjectID get all task from slice of project Ids
 func (handler *TaskHandler) FindAllTaskByProjectID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	ID := tools.GetParam("id", r)
 	type projectIds struct {
 		Ids []string
@@ -141,33 +133,26 @@ func (handler *TaskHandler) FindAllTaskByProjectID(w http.ResponseWriter, r *htt
 		return
 	}
 
-	taskProjectIds := &projectIds{}
 	defer r.Body.Close()
 
 	if len(ID) != 0 {
-		tasks, err := handler.service.FindAllByProjectID([]string{ID})
+		records, err := handler.service.FindAllByProjectID([]string{ID})
+
 		if err != nil {
 			w.WriteHeader(http.StatusNotFound)
 			w.Write(NewHTTPError(http.StatusNotFound, err.Error()))
 			return
 		}
-		if err := json.NewEncoder(w).Encode(tasks); err != nil {
+
+		tasks, err := json.Marshal(records)
+		if err != nil {
+			fmt.Println(err.Error())
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
+		w.Write(tasks)
 		w.WriteHeader(http.StatusOK)
 	}
-
-	if err := json.NewDecoder(r.Body).Decode(taskProjectIds); err != nil {
-		w.Write(NewHTTPError(http.StatusInternalServerError, err.Error()))
-	}
-
-	tasks, err := handler.service.FindAllByProjectID(taskProjectIds.Ids)
-	if err != nil {
-		w.Write(NewHTTPError(http.StatusInternalServerError, err.Error()))
-		return
-	}
-	json.NewEncoder(w).Encode(tasks)
 }
 
 //HandleRoutes : all routing for task struct
@@ -177,5 +162,4 @@ func (handler *TaskHandler) HandleRoutes() {
 	handler.router.HandleFunc("/task/update", handler.Update).Methods("POST")
 	handler.router.HandleFunc("/task/delete/{id}", handler.Delete).Methods("GET")
 	handler.router.HandleFunc("/task/projects/{id}", handler.FindAllTaskByProjectID).Methods("GET")
-	handler.router.HandleFunc("/task/projects/", handler.FindAllTaskByProjectID).Methods("GET")
 }
