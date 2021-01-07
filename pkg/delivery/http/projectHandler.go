@@ -78,9 +78,9 @@ func (handler *ProjectHandler) FindByID(w http.ResponseWriter, r *http.Request) 
 		w.Write(NewHTTPError(http.StatusNotFound, err.Error()))
 		return
 	}
+
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(resutls)
-
 }
 
 //DeleteByID : delete project by Id
@@ -97,6 +97,7 @@ func (handler *ProjectHandler) DeleteByID(w http.ResponseWriter, r *http.Request
 		w.Write(NewHTTPError(http.StatusInternalServerError, err.Error()))
 		return
 	}
+	w.WriteHeader(http.StatusOK)
 }
 
 //UpdateByID : Update project by Id

@@ -61,7 +61,7 @@ func (handler *TaskHandler) FindByID(w http.ResponseWriter, r *http.Request) {
 		w.Write(NewHTTPError(http.StatusNotFound, "Record not found."))
 		return
 	}
-	
+
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(t)
 }
@@ -150,8 +150,9 @@ func (handler *TaskHandler) FindAllTaskByProjectID(w http.ResponseWriter, r *htt
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-		w.Write(tasks)
+
 		w.WriteHeader(http.StatusOK)
+		w.Write(tasks)
 	}
 }
 

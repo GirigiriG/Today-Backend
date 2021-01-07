@@ -45,9 +45,9 @@ func (handler *UserHandler) Create(w http.ResponseWriter, r *http.Request) {
 		w.Write(NewHTTPError(http.StatusBadRequest, err.Error()))
 		return
 	}
-
+	
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(u)
-
 }
 
 //Update register user service and http router
@@ -77,6 +77,7 @@ func (handler *UserHandler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(u)
 }
 
@@ -98,6 +99,7 @@ func (handler *UserHandler) FindByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(u)
 }
 
@@ -118,6 +120,7 @@ func (handler *UserHandler) deleteByID(w http.ResponseWriter, r *http.Request) {
 		w.Write(NewHTTPError(http.StatusNotFound, err.Error()))
 		return
 	}
+	w.WriteHeader(http.StatusOK)
 }
 
 //HandleRoutes handler for user

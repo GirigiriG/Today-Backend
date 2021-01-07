@@ -9,7 +9,7 @@ import (
 
 var (
 	GoogleOauthConfig = &oauth2.Config{
-		RedirectURL:  "http://localhost:3000/secret",
+		RedirectURL:  "http://localhost:3001/secret",
 		ClientID:     os.Getenv("AUTH_CLIENTID"),
 		ClientSecret: os.Getenv("AUTH_CLIENT_SECRET"),
 		Scopes:       []string{"https://www.googleapis.com/auth/userinfo.email"},

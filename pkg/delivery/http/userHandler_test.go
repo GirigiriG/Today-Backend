@@ -14,7 +14,7 @@ import (
 )
 
 func TestUserHandlerFind(t *testing.T) {
-	endPoint := "localhost:3000/user/find/89e8a24d-09cc-4ce6-b9b6-cc2908ab1542222"
+	endPoint := "localhost:3001/user/find/89e8a24d-09cc-4ce6-b9b6-cc2908ab1542222"
 	req, err := http.NewRequest("GET", endPoint, nil)
 	if err != nil {
 		t.Errorf(err.Error())
@@ -33,7 +33,7 @@ func TestUserHandlerCreate(t *testing.T) {
 		"Email": "me@gmail.com"
 	}`
 
-	endPoint := "localhost:3000/user/create"
+	endPoint := "localhost:3001/user/create"
 	req, err := http.NewRequest("GET", endPoint, strings.NewReader(content))
 	if err != nil {
 		t.Errorf(err.Error())
