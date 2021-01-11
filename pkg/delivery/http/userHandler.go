@@ -45,7 +45,7 @@ func (handler *UserHandler) Create(w http.ResponseWriter, r *http.Request) {
 		w.Write(NewHTTPError(http.StatusBadRequest, err.Error()))
 		return
 	}
-	
+
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(u)
 }
@@ -114,7 +114,6 @@ func (handler *UserHandler) deleteByID(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err := handler.userService.DeleteByID(ID)
-
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write(NewHTTPError(http.StatusNotFound, err.Error()))

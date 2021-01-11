@@ -42,7 +42,7 @@ func (handler *TaskHandler) createNewTask(w http.ResponseWriter, r *http.Request
 	t, err = handler.service.Create(t)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write(NewHTTPError(http.StatusBadRequest, "Bad request."))
+		w.Write(NewHTTPError(http.StatusBadRequest, err.Error()))
 		return
 	}
 
@@ -58,7 +58,7 @@ func (handler *TaskHandler) FindByID(w http.ResponseWriter, r *http.Request) {
 	t, err := handler.service.FindByID(ID)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write(NewHTTPError(http.StatusNotFound, "Record not found."))
+		w.Write(NewHTTPError(http.StatusNotFound, err.Error()))
 		return
 	}
 
@@ -90,7 +90,7 @@ func (handler *TaskHandler) Update(w http.ResponseWriter, r *http.Request) {
 	t, err = handler.service.Update(t)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write(NewHTTPError(http.StatusNotFound, "Record not found."))
+		w.Write(NewHTTPError(http.StatusNotFound, err.Error()))
 		return
 	}
 
@@ -111,7 +111,7 @@ func (handler *TaskHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	}
 	if err := handler.service.DeleteByID(ID); err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write(NewHTTPError(http.StatusNotFound, "Record not found."))
+		w.Write(NewHTTPError(http.StatusNotFound, err.Error()))
 		return
 	}
 	w.WriteHeader(http.StatusOK)
@@ -158,9 +158,9 @@ func (handler *TaskHandler) FindAllTaskByProjectID(w http.ResponseWriter, r *htt
 
 //HandleRoutes : all routing for task struct
 func (handler *TaskHandler) HandleRoutes() {
-	handler.router.HandleFunc("/task/create", handler.createNewTask).Methods("GET")
+	handler.router.HandleFunc("/task/create", handler.createNewTask).Methods("POST")
 	handler.router.HandleFunc("/task/find/{id}", handler.FindByID).Methods("GET")
 	handler.router.HandleFunc("/task/update", handler.Update).Methods("POST")
 	handler.router.HandleFunc("/task/delete/{id}", handler.Delete).Methods("GET")
-	handler.router.HandleFunc("/task/projects/{id}", handler.FindAllTaskByProjectID).Methods("GET")
+	handler.router.HandleFunc("/task/project/{id}", handler.FindAllTaskByProjectID).Methods("GET")
 }

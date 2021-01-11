@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	allFields = `id, project_name, created_by, status, created_date, last_modified_date, sprint_id, description, percent_complete`
+	allFields = `id, name, created_by, status, created_date, last_modified_date, sprint_id, description, percent_complete`
 )
 
 //NewProjectRepository holds repo db connection
@@ -61,7 +61,7 @@ func (repo *newProjectRepository) FindByID(ID string) (*Project, error) {
 func (repo *newProjectRepository) UpdateByID(p *Project) error {
 	query := `
 		UPDATE project 
-		SET project_name=$1, status=$2, last_modified_date=$3, description=$4, percent_complete=$5, sprint_id=$6
+		SET name=$1, status=$2, last_modified_date=$3, description=$4, percent_complete=$5, sprint_id=$6
 		WHERE id=$7`
 
 	results, err := repo.database.Exec(query, p.ProjectName, p.Status, p.LastModifiedDate, p.Description, p.PercentComplete, p.SprintID, p.ID)

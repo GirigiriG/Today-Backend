@@ -26,8 +26,20 @@ func NewTaskRepo(db *sql.DB) Repository {
 
 func (repo *repo) Create(t *Task) error {
 	query := `INSERT INTO task 
-	(id, task_name, owner_id, owner_name, created_date, last_modified_date, status, created_by, project_id, estimate, remaining, sprint_id)
-	VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`
+	(
+		id, 
+		name,
+		 owner_id,
+		 owner_name,
+		 created_date,
+		 last_modified_date,
+		 status,
+		 created_by,
+		 project_id,
+		 estimate,
+		 remaining,
+		 sprint_id)
+	VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`
 
 	_, err := repo.database.Exec(query, t.ID, t.TaskName, t.OwnerID, t.OwnerName, t.CreatedDate, t.LastModifiedDate, t.Status, t.CreatedBy,
 		t.ProjectID, t.Estimate, t.Remaining,t.SprintID)
@@ -42,7 +54,7 @@ func (repo *repo) FindByID(ID string) (*Task, error) {
 	query := `
 		SELECT 
 			id, 
-			task_name, 
+			name, 
 			owner_id, 
 			owner_name,
 			created_date,
@@ -72,16 +84,24 @@ func (repo *repo) FindByID(ID string) (*Task, error) {
 //FindAllTaskByProjectID find all test related to a project by projectid
 func (repo *repo) FindAllByProjectID(IDs []string) ([]Task, error) {
 	var tasks []Task
-	query := `SELECT task_name FROM task WHERE project_id = ANY($1);`
+	query := `SELECT 
+				id, 
+				name, 
+				estimate, 
+				remaining, 
+				owner_name,
+				status 
+			FROM task 
+			WHERE project_id = ANY($1) ORDER BY created_date DESC;`
 	rows, err := repo.database.Query(query, pq.Array(IDs))
 	if err != nil {
 		panic(err.Error())
 	}
 
 	for rows.Next() {
-		var task Task
-		rows.Scan(&task.TaskName)
-		tasks = append(tasks, task)
+		var t Task
+		rows.Scan(&t.ID, &t.TaskName, &t.Estimate, &t.Remaining, &t.OwnerName, &t.Status)
+		tasks = append(tasks, t)
 	}
 
 	if len(tasks) == 0 {
@@ -93,11 +113,21 @@ func (repo *repo) FindAllByProjectID(IDs []string) ([]Task, error) {
 func (repo *repo) Update(t *Task) error {
 	query := `
 		UPDATE task
-		SET task_name=$1, owner_id=$2, last_modified_date=$3, status=$4, project_id=$5, estimate=$6, remaining=$7, sprint_id=$8`
+		SET 
+			name=$1, 
+			owner_id=$2, 
+			last_modified_date=$3, 
+			status=$4, 
+			project_id=$5, 
+			estimate=$6, 
+			remaining=$7, 
+			sprint_id=$8,
+			owner_name=$9
+		WHERE id=$10`
 	results, err := repo.database.Exec(query,
 		t.TaskName, t.OwnerID, t.LastModifiedDate,
 		t.Status, t.ProjectID, t.Estimate, t.Remaining,
-		t.SprintID)
+		t.SprintID, t.OwnerName, t.ID)
 
 	if err != nil {
 		return err

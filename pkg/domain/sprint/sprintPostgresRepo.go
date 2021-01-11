@@ -19,7 +19,7 @@ func NewSprintRepositroy(db *sql.DB) *Repo {
 
 //Create : creates new sprint record
 func (repo *Repo) Create(s *Sprint) error {
-	query := `INSERT INTO sprint (id, sprint_name, start_date, end_date)
+	query := `INSERT INTO sprint (id, name, start_date, end_date)
 		VALUES($1,$2,$3,$4)`
 	results, err := repo.database.Exec(query, s.ID, s.SprintName, s.StartDate, s.EndDate)
 	if err != nil {
@@ -37,7 +37,7 @@ func (repo *Repo) Create(s *Sprint) error {
 //Update : Update sprint record
 func (repo *Repo) Update(s *Sprint) error {
 	query := `UPDATE sprint
-		SET sprint_name= $1, start_date= $2, end_date= $3
+		SET name= $1, start_date= $2, end_date= $3
 		WHERE id = $4`
 	results, err := repo.database.Exec(query, s.SprintName, s.StartDate, s.EndDate, s.ID)
 	if err != nil {
@@ -67,7 +67,7 @@ func (repo *Repo) DeleteByID(ID string) error {
 
 //FindByID : find single sprint record by id
 func (repo *Repo) FindByID(ID string) (*Sprint, error) {
-	query := `SELECT id, sprint_name, start_date, end_date  FROM sprint WHERE id = $1`
+	query := `SELECT id, name, start_date, end_date  FROM sprint WHERE id = $1`
 
 	rows, err := repo.database.Query(query, ID)
 	if err != nil {

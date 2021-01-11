@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 
 	"github.com/GirigiriG/Clean-Architecture-golang/pkg/auth"
 	"github.com/GirigiriG/Clean-Architecture-golang/pkg/domain/sprint"
@@ -101,4 +102,42 @@ func HandleRoutes(db *sql.DB, router *mux.Router) {
 		json.NewEncoder(w).Encode(result)
 	})
 
+	router.HandleFunc("/get/record/", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		type record struct {
+			ID   string
+			Name string
+		}
+
+		var results []record
+		var typeRecord record
+
+		name := r.URL.Query()["name"][0]
+
+		if len(name) == 0 {
+			w.WriteHeader(http.StatusNotFound)
+			json.NewEncoder(w).Encode(results)
+			return
+		}
+		recordType := r.URL.Query()["type"][0]
+
+		query := `SELECT id, name FROM ` + recordType + ` WHERE name ILIKE ` + "'%" + name + "%' " + `LIMIT 5;`
+		query = strings.ReplaceAll(query, "+", " ")
+
+		rows, err := db.Query(query)
+		if err != nil {
+			fmt.Println(err.Error())
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		for rows.Next() {
+			rows.Scan(&typeRecord.ID, &typeRecord.Name)
+			results = append(results, typeRecord)
+		}
+
+		json.NewEncoder(w).Encode(results)
+
+	})
 }

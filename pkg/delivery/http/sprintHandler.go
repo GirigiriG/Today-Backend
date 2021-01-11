@@ -27,24 +27,23 @@ func NewSprintHandler(service *sprint.Service, router *mux.Router) *SprintHandle
 //Create : create new sprint http route
 func (handler *SprintHandler) Create(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	s := &sprint.Sprint{}
+	record := &sprint.Sprint{}
 	defer r.Body.Close()
 
-	err := json.NewDecoder(r.Body).Decode(s)
+	err := json.NewDecoder(r.Body).Decode(record)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write(NewHTTPError(http.StatusBadRequest, "Bad request"))
 		return
 	}
 
-	s, err = handler.service.Create(s)
-
+	record, err = handler.service.Create(record)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write(NewHTTPError(http.StatusBadRequest, err.Error()))
 		return
 	}
-	json.NewEncoder(w).Encode(s)
+	json.NewEncoder(w).Encode(record)
 
 }
 
@@ -61,7 +60,7 @@ func (handler *SprintHandler) FindByID(w http.ResponseWriter, r *http.Request) {
 	record, err := handler.service.FindByID(ID)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write(NewHTTPError(http.StatusNotFound, "Record not found"))
+		w.Write(NewHTTPError(http.StatusNotFound, err.Error()))
 		return
 	}
 	json.NewEncoder(w).Encode(record)
@@ -90,7 +89,7 @@ func (handler *SprintHandler) UpdateByID(w http.ResponseWriter, r *http.Request)
 	s, err = handler.service.Update(s)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write(NewHTTPError(http.StatusBadRequest, "Bad request"))
+		w.Write(NewHTTPError(http.StatusBadRequest, err.Error()))
 		return
 	}
 
@@ -111,7 +110,7 @@ func (handler *SprintHandler) DeleteByID(w http.ResponseWriter, r *http.Request)
 	err := handler.service.DeleteByID(ID)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write(NewHTTPError(http.StatusNotFound, "Record not found"))
+		w.Write(NewHTTPError(http.StatusNotFound, err.Error()))
 		return
 	}
 	w.WriteHeader(http.StatusOK)

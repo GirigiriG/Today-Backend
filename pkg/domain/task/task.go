@@ -42,10 +42,11 @@ func NewTask(t *Task) (*Task, error) {
 		return nil, err
 	}
 
-	return &Task{
+	newRecord := &Task{
 		ID:               t.ID,
 		TaskName:         t.TaskName,
 		OwnerID:          t.OwnerID,
+		OwnerName:        t.OwnerName,
 		CreatedDate:      time.Now(),
 		LastModifiedDate: time.Now(),
 		Status:           t.Status,
@@ -54,7 +55,12 @@ func NewTask(t *Task) (*Task, error) {
 		Estimate:         t.Estimate,
 		Remaining:        t.Remaining,
 		SprintID:         t.SprintID,
-	}, nil
+	}
+
+	if len(newRecord.OwnerName) == 0 {
+		newRecord.OwnerName = "Unassigned"
+	}
+	return newRecord, nil
 }
 
 //UpdateTask update test record
