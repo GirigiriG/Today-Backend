@@ -39,7 +39,12 @@ func (repo *Repo) Update(s *Sprint) error {
 	query := `UPDATE sprint
 		SET name= $1, start_date= $2, end_date= $3
 		WHERE id = $4`
-	results, err := repo.database.Exec(query, s.SprintName, s.StartDate, s.EndDate, s.ID)
+	results, err := repo.database.Exec(query, 
+		s.SprintName, 
+		s.StartDate, 
+		s.EndDate, 
+		s.ID,
+	)
 	if err != nil {
 		return err
 	}

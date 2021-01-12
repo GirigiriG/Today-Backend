@@ -137,6 +137,11 @@ func HandleRoutes(db *sql.DB, router *mux.Router) {
 			results = append(results, typeRecord)
 		}
 
+		if len(results) == 0 {
+			w.WriteHeader(http.StatusNotFound)
+			return
+
+		}
 		json.NewEncoder(w).Encode(results)
 
 	})

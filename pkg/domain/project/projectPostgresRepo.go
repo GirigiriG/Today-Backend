@@ -6,7 +6,16 @@ import (
 )
 
 const (
-	allFields = `id, name, created_by, status, created_date, last_modified_date, sprint_id, description, percent_complete`
+	allFields = `
+	id,
+	name,
+	created_by,
+	status,
+	created_date,
+	last_modified_date,
+	sprint_id,
+	description,
+	percent_complete`
 )
 
 //NewProjectRepository holds repo db connection
@@ -26,9 +35,17 @@ func (repo *newProjectRepository) Create(p *Project) error {
 		(%s)
 		VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)`, allFields)
 
-	_, err := repo.database.Exec(query, p.ID, p.ProjectName, p.CreatedBy,
-		p.Status, p.CreatedDate, p.LastModifiedDate, p.SprintID,
-		p.Description, p.PercentComplete)
+	_, err := repo.database.Exec(query, 
+			p.ID, 
+			p.ProjectName, 
+			p.CreatedBy, 
+			p.Status, 
+			p.CreatedDate, 
+			p.LastModifiedDate, 
+			p.SprintID, 
+			p.Description, 
+			p.PercentComplete,
+		)
 
 	if err != nil {
 		return err
@@ -50,8 +67,17 @@ func (repo *newProjectRepository) FindByID(ID string) (*Project, error) {
 	p := &Project{}
 
 	for rows.Next() {
-		rows.Scan(&p.ID, &p.ProjectName, &p.CreatedBy, &p.Status, &p.CreatedDate, &p.LastModifiedDate,
-			&p.SprintID, &p.Description, &p.PercentComplete)
+		rows.Scan(
+			&p.ID, 
+			&p.ProjectName, 
+			&p.CreatedBy, 
+			&p.Status, 
+			&p.CreatedDate, 
+			&p.LastModifiedDate,
+			&p.SprintID, 
+			&p.Description, 
+			&p.PercentComplete,
+		)
 	}
 
 	return p, nil
@@ -61,10 +87,25 @@ func (repo *newProjectRepository) FindByID(ID string) (*Project, error) {
 func (repo *newProjectRepository) UpdateByID(p *Project) error {
 	query := `
 		UPDATE project 
-		SET name=$1, status=$2, last_modified_date=$3, description=$4, percent_complete=$5, sprint_id=$6
+		SET 
+			name=$1,
+			status=$2,
+			last_modified_date=$3,
+			description=$4,
+			percent_complete=$5,
+			sprint_id=$6
 		WHERE id=$7`
 
-	results, err := repo.database.Exec(query, p.ProjectName, p.Status, p.LastModifiedDate, p.Description, p.PercentComplete, p.SprintID, p.ID)
+	results, err := repo.database.Exec(query, 
+		p.ProjectName, 
+		p.Status, 
+		p.LastModifiedDate, 
+		p.Description, 
+		p.PercentComplete, 
+		p.SprintID, 
+		p.ID,
+	)
+	
 	if err != nil {
 		return err
 	}

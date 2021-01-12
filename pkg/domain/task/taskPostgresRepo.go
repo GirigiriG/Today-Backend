@@ -41,8 +41,20 @@ func (repo *repo) Create(t *Task) error {
 		 sprint_id)
 	VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`
 
-	_, err := repo.database.Exec(query, t.ID, t.TaskName, t.OwnerID, t.OwnerName, t.CreatedDate, t.LastModifiedDate, t.Status, t.CreatedBy,
-		t.ProjectID, t.Estimate, t.Remaining,t.SprintID)
+	_, err := repo.database.Exec(query, 
+		t.ID, 
+		t.TaskName, 
+		t.OwnerID, 
+		t.OwnerName, 
+		t.CreatedDate, 
+		t.LastModifiedDate, 
+		t.Status, 
+		t.CreatedBy,
+		t.ProjectID, 
+		t.Estimate, 
+		t.Remaining,
+		t.SprintID,
+	)
 
 	if err != nil {
 		return err
@@ -75,8 +87,20 @@ func (repo *repo) FindByID(ID string) (*Task, error) {
 	t := &Task{}
 
 	for rows.Next() {
-		rows.Scan(&t.ID, &t.TaskName, &t.OwnerID, &t.OwnerName, &t.CreatedDate, &t.LastModifiedDate,
-			&t.Status, &t.CreatedBy, &t.ProjectID, &t.Estimate, &t.Remaining, &t.SprintID)
+		rows.Scan(
+			&t.ID, 
+			&t.TaskName, 
+			&t.OwnerID, 
+			&t.OwnerName, 
+			&t.CreatedDate, 
+			&t.LastModifiedDate,
+			&t.Status, 
+			&t.CreatedBy, 
+			&t.ProjectID, 
+			&t.Estimate, 
+			&t.Remaining, 
+			&t.SprintID,
+		)
 	}
 	return t, nil
 }
@@ -84,7 +108,8 @@ func (repo *repo) FindByID(ID string) (*Task, error) {
 //FindAllTaskByProjectID find all test related to a project by projectid
 func (repo *repo) FindAllByProjectID(IDs []string) ([]Task, error) {
 	var tasks []Task
-	query := `SELECT 
+	query := `
+			SELECT 
 				id, 
 				name, 
 				estimate, 
@@ -92,7 +117,9 @@ func (repo *repo) FindAllByProjectID(IDs []string) ([]Task, error) {
 				owner_name,
 				status 
 			FROM task 
-			WHERE project_id = ANY($1) ORDER BY created_date DESC;`
+			WHERE project_id = ANY($1) 
+			ORDER BY created_date DESC;`
+
 	rows, err := repo.database.Query(query, pq.Array(IDs))
 	if err != nil {
 		panic(err.Error())
@@ -100,7 +127,14 @@ func (repo *repo) FindAllByProjectID(IDs []string) ([]Task, error) {
 
 	for rows.Next() {
 		var t Task
-		rows.Scan(&t.ID, &t.TaskName, &t.Estimate, &t.Remaining, &t.OwnerName, &t.Status)
+		rows.Scan(
+			&t.ID, 
+			&t.TaskName, 
+			&t.Estimate, 
+			&t.Remaining, 
+			&t.OwnerName, 
+			&t.Status,
+		)
 		tasks = append(tasks, t)
 	}
 

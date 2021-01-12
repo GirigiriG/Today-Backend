@@ -16,17 +16,19 @@ const (
 //User struct
 type User struct {
 	ID        string
+	Name      string
 	FirstName string
 	LastName  string
 	Email     string
 }
 
 //NewUser create new user record
-func NewUser(newUser *User) (*User, error) {
-	if err := validate(newUser); err != nil {
+func NewUser(u *User) (*User, error) {
+	if err := validate(u); err != nil {
 		return nil, err
 	}
-	return newUser, nil
+	u.Name = u.FirstName +" "+ u.LastName
+	return u, nil
 }
 
 func UpdateUser(u *User) (*User, error) {
