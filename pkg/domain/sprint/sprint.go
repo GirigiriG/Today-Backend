@@ -6,18 +6,20 @@ import (
 	"time"
 )
 
-const (
-	//SprintNameIsRquired : sprint name required
-	SprintNameIsRquired = "Please provide sprint name"
-	//StartDatedIsRquired : start date required
-	StartDatedIsRquired = "Please provide start date"
-	//StartDateMustBeTodayOrGreater : start date more be today or greater
-	StartDateMustBeTodayOrGreater = "Start date must be greater than today"
-	//EndDatedIsRquired : End date must be greater than start date
-	EndDatedIsRquired = "Please provide end date"
-	//EndDateIsGreaterThanStartDate : End date must be greater than start date
-	EndDateIsGreaterThanStartDate = "End date must be greater than start date"
-)
+//ErrSprintNameIsRquired : sprint name required
+var ErrSprintNameIsRquired = errors.New("Please provide sprint name")
+
+//ErrStartDatedIsRquired : start date required
+var ErrStartDatedIsRquired = errors.New("Please provide start date")
+
+//ErrStartDateMustBeTodayOrGreater : start date more be today or greater
+var ErrStartDateMustBeTodayOrGreater = errors.New("Start date must be greater than today")
+
+//ErrEndDatedIsRquired : End date must be greater than start date
+var ErrEndDatedIsRquired = errors.New("Please provide end date")
+
+//ErrEndDateIsGreaterThanStartDate : End date must be greater than start date
+var ErrEndDateIsGreaterThanStartDate = errors.New("End date must be greater than start date")
 
 //Sprint : A struct that holds sprint's record data
 type Sprint struct {
@@ -53,24 +55,24 @@ func UpdateSprint(s *Sprint) (*Sprint, error) {
 
 func validate(s *Sprint) error {
 	if len(s.SprintName) == 0 {
-		return errors.New(SprintNameIsRquired)
+		return ErrSprintNameIsRquired
 	}
 
 	fmt.Println(s.StartDate.IsZero())
 	if s.StartDate.IsZero() {
-		return errors.New(StartDatedIsRquired)
+		return ErrStartDatedIsRquired
 	}
 
 	if s.EndDate.IsZero() {
-		return errors.New(EndDatedIsRquired)
+		return ErrEndDatedIsRquired
 	}
 
 	if !s.StartDate.Before(time.Now().Add(0 * time.Minute)) {
-		return errors.New(StartDateMustBeTodayOrGreater)
+		return ErrStartDateMustBeTodayOrGreater
 	}
 
 	if !s.StartDate.Before(s.EndDate) {
-		return errors.New(EndDateIsGreaterThanStartDate)
+		return ErrEndDateIsGreaterThanStartDate
 	}
 
 	return nil

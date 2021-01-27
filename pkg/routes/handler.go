@@ -51,7 +51,6 @@ func HandleRoutes(db *sql.DB, router *mux.Router) {
 	projectRouterHandler.HandleRoutes()
 
 	//Sprint handler/service
-
 	sprintRepo := sprint.NewSprintRepositroy(db)
 	sprintService := sprint.NewSprintService(sprintRepo)
 	sprintRouterHandler := delivery.NewSprintHandler(sprintService, router)

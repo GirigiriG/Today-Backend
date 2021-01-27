@@ -5,35 +5,35 @@ import (
 	"time"
 )
 
-const (
+
 	//NameRequired : Name required error messsage
-	NameRequired = "Please provide a task name"
+	var ErrNameRequired = errors.New("Please provide a task name")
 	//OwnerIDRequired : Owuner id required error messsage
-	OwnerIDRequired = "Pleasae provided owner id"
+	var ErrOwnerIDRequired = errors.New("Pleasae provided owner id")
 	//StatusRequired : Status required error messsage
-	StatusRequired = "Pleasae provided status"
+	var ErrStatusRequired = errors.New("Pleasae provided status")
 	//ProjectIDRequired : Project id required error messsage
-	ProjectIDRequired = "Pleasae provided project id"
+	var ErrProjectIDRequired = errors.New("Pleasae provided project id")
 	//SprintIDRequired : Sprint id required error messsage
-	SprintIDRequired = "Pleasae provided sprint id"
+	var ErrSprintIDRequired = errors.New("Pleasae provided sprint id")
 	//RemainingHoursMustBeEqaulToZero : Task must have 0 hours remaining error message
-	RemainingHoursMustBeEqaulToZero = "This task still has remaining hours"
-)
+	var ErrRemainingHoursMustBeEqaulToZero = errors.New("This task still has remaining hours")
+
 
 //Task Object
 type Task struct {
-	ID               string
-	TaskName         string
-	OwnerID          string
-	OwnerName        string
-	CreatedDate      time.Time
-	LastModifiedDate time.Time
-	Status           string
-	CreatedBy        string
-	ProjectID        string
-	Estimate         int32
-	Remaining        int32
-	SprintID         string
+	ID               string    `json:"id"`
+	TaskName         string    `json:"name"`
+	OwnerID          string    `json:"ownerId"`
+	OwnerName        string    `json:"ownerName"`
+	CreatedDate      time.Time `json:"createdDate"`
+	LastModifiedDate time.Time `json:"lastModifiedDate"`
+	Status           string    `json:"status"`
+	CreatedBy        string    `json:"createdBy"`
+	ProjectID        string    `json:"projectId"`
+	Estimate         int32     `json:"estimate"`
+	Remaining        int32     `json:"remaining"`
+	SprintID         string    `json:"sprintId"`
 }
 
 //NewTask create a new task record type
@@ -75,26 +75,26 @@ func UpdateTask(t *Task) (*Task, error) {
 func validateNewTask(t *Task) error {
 
 	if len(t.TaskName) == 0 {
-		return errors.New(NameRequired)
+		return ErrNameRequired
 	}
 
 	if len(t.OwnerID) == 0 {
-		return errors.New(OwnerIDRequired)
+		return ErrOwnerIDRequired
 	}
 
 	if len(t.Status) == 0 {
-		return errors.New(StatusRequired)
+		return ErrStatusRequired
 	}
 
 	if len(t.ProjectID) == 0 {
-		return errors.New(ProjectIDRequired)
+		return ErrProjectIDRequired
 	}
 	if len(t.SprintID) == 0 {
-		return errors.New(SprintIDRequired)
+		return ErrSprintIDRequired
 	}
 
 	if t.Status == "Closed" && t.Remaining > 0 {
-		return errors.New(RemainingHoursMustBeEqaulToZero)
+		return ErrRemainingHoursMustBeEqaulToZero
 	}
 	return nil
 }

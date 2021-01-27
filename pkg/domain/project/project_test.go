@@ -25,7 +25,7 @@ func TestProjectNameRequired(t *testing.T) {
 	_, err := project.NewProject(newProjectRecord)
 
 	assert.NotNil(t, err)
-	assert.Equal(t, project.ProjectNameRequired, err.Error())
+	assert.Equal(t, project.ErrProjectNameRequired, err.Error())
 }
 
 func TestStatusRequired(t *testing.T) {
@@ -35,7 +35,7 @@ func TestStatusRequired(t *testing.T) {
 	_, err := project.NewProject(newProjectRecord)
 
 	assert.NotNil(t, err)
-	assert.Equal(t, project.StatusRequired, err.Error())
+	assert.Equal(t, project.ErrStatusRequired, err.Error())
 }
 
 func TestSprintIDRequired(t *testing.T) {
@@ -44,7 +44,7 @@ func TestSprintIDRequired(t *testing.T) {
 
 	_, err := project.NewProject(newProjectRecord)
 	assert.NotNil(t, err)
-	assert.Equal(t, project.SprintIDRequired, err.Error())
+	assert.Equal(t, project.ErrSprintIDRequired, err.Error())
 }
 
 func TestProjectPercentageMustEqual100(t *testing.T) {
@@ -54,7 +54,7 @@ func TestProjectPercentageMustEqual100(t *testing.T) {
 	_, err := project.NewProject(newProjectRecord)
 
 	assert.NotNil(t, err)
-	assert.Equal(t, project.PercentageMustEqaul100, err.Error())
+	assert.Equal(t, project.ErrPercentageMustEqaul100, err.Error())
 }
 
 func createNewProjectTestData() *project.Project {

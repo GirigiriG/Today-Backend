@@ -27,7 +27,7 @@ func TestNewSprintCreationFailure(t *testing.T) {
 	ID := tools.GenerateStringUUID()
 	_, err := sprint.NewSprint(s, ID)
 
-	assert.Equal(t, sprint.SprintNameIsRquired, err.Error())
+	assert.Equal(t, sprint.ErrSprintNameIsRquired, err.Error())
 }
 
 func TestNewSprintStartDateRequired(t *testing.T) {
@@ -38,7 +38,7 @@ func TestNewSprintStartDateRequired(t *testing.T) {
 	fmt.Println(s.StartDate.IsZero())
 	_, err := sprint.NewSprint(s, ID)
 
-	assert.Equal(t, sprint.SprintNameIsRquired, err.Error())
+	assert.Equal(t, sprint.ErrSprintNameIsRquired, err.Error())
 }
 
 func TestNewSprintStartDateGreaterOrEqualNow(t *testing.T) {
@@ -50,7 +50,7 @@ func TestNewSprintStartDateGreaterOrEqualNow(t *testing.T) {
 	ID := tools.GenerateStringUUID()
 
 	_, err := sprint.NewSprint(s, ID)
-	assert.Equal(t, sprint.StartDateMustBeTodayOrGreater, err.Error())
+	assert.Equal(t, sprint.ErrStartDateMustBeTodayOrGreater, err.Error())
 }
 
 func TestNewSprintEndDateRequired(t *testing.T) {
@@ -59,7 +59,7 @@ func TestNewSprintEndDateRequired(t *testing.T) {
 
 	ID := tools.GenerateStringUUID()
 	_, err := sprint.NewSprint(s, ID)
-	assert.Equal(t, sprint.EndDatedIsRquired, err.Error())
+	assert.Equal(t, sprint.ErrEndDatedIsRquired, err.Error())
 }
 
 func TestNewSprintEndDateAfterStartDate(t *testing.T) {

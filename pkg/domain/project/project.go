@@ -5,16 +5,22 @@ import (
 	"time"
 )
 
-const (
-	ProjectNameRequired    = "Please provide project name"
-	SprintIDRequired       = "Please provide sprint id"
-	StatusRequired         = "Please provide status"
-	PercentageMustEqaul100 = "Project percentage does not equal 100 please make sure all task are complete"
-)
+//ErrProjectNameRequired : project name rquired
+var ErrProjectNameRequired = errors.New("Please provide project name")
 
+//ErrSprintIDRequired : sprint id not provided
+var ErrSprintIDRequired = errors.New("Please provide sprint id")
+
+//ErrStatusRequired : status not provided
+var ErrStatusRequired = errors.New("Please provide status")
+
+//ErrPercentageMustEqaul100 :  percent conmplete must equal 100
+var ErrPercentageMustEqaul100 = errors.New("Project percentage does not equal 100 please make sure all task are complete")
+
+//Project : project entity
 type Project struct {
 	ID               string
-	Status           string `json:status,omitempty`
+	Status           string `json:"status"`
 	SprintID         string
 	ProjectName      string
 	CreatedBy        string
@@ -43,6 +49,7 @@ func NewProject(p *Project) (*Project, error) {
 	}, nil
 }
 
+//UpdateProject : update project record
 func UpdateProject(p *Project) (*Project, error) {
 	if err := validateProjectRecord(p); err != nil {
 		return nil, err
@@ -54,17 +61,17 @@ func UpdateProject(p *Project) (*Project, error) {
 
 func validateProjectRecord(p *Project) error {
 	if len(p.ProjectName) == 0 {
-		return errors.New(ProjectNameRequired)
+		return ErrProjectNameRequired
 	}
 	if len(p.Status) == 0 {
-		return errors.New(StatusRequired)
+		return ErrStatusRequired
 	}
 
 	if len(p.SprintID) == 0 {
-		return errors.New(SprintIDRequired)
+		return ErrSprintIDRequired
 	}
 	if p.Status == "Completed" && p.PercentComplete != 100 {
-		return errors.New(PercentageMustEqaul100)
+		return ErrPercentageMustEqaul100
 	}
 	return nil
 }

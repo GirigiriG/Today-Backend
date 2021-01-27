@@ -4,14 +4,14 @@ import (
 	"errors"
 )
 
-const (
-	//FirstNameRequired : first name required message
-	FirstNameRequired = "First name is required."
-	//LastNameRequired : last name required message
-	LastNameRequired = "Last name is required."
-	//EmailRequired : email required message
-	EmailRequired = "Email address is required."
-)
+//ErrFirstNameRequired : first name required message
+var ErrFirstNameRequired = errors.New("first name is required")
+
+//ErrLastNameRequired : last name required message
+var ErrLastNameRequired = errors.New("Last name is required")
+
+//ErrEmailRequired : email required message
+var ErrEmailRequired = errors.New("Email address is required")
 
 //User struct
 type User struct {
@@ -27,10 +27,11 @@ func NewUser(u *User) (*User, error) {
 	if err := validate(u); err != nil {
 		return nil, err
 	}
-	u.Name = u.FirstName +" "+ u.LastName
+	u.Name = u.FirstName + " " + u.LastName
 	return u, nil
 }
 
+//UpdateUser : update the user record.
 func UpdateUser(u *User) (*User, error) {
 	if err := validate(u); err != nil {
 		return nil, err
@@ -40,14 +41,14 @@ func UpdateUser(u *User) (*User, error) {
 
 func validate(u *User) error {
 	if len(u.FirstName) == 0 {
-		return errors.New(FirstNameRequired)
+		return ErrFirstNameRequired
 	}
 
 	if len(u.LastName) == 0 {
-		return errors.New(LastNameRequired)
+		return ErrLastNameRequired
 	}
 	if len(u.Email) == 0 {
-		return errors.New(EmailRequired)
+		return ErrEmailRequired
 	}
 	return nil
 }

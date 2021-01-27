@@ -20,7 +20,7 @@ func TestNameRequired(t *testing.T) {
 
 	_, err := task.NewTask(newTask)
 
-	assert.Equal(t, err.Error(), task.NameRequired)
+	assert.Equal(t, err.Error(), task.ErrNameRequired)
 }
 
 func TestOwnerIDRequired(t *testing.T) {
@@ -29,7 +29,7 @@ func TestOwnerIDRequired(t *testing.T) {
 
 	_, err := task.NewTask(newTask)
 
-	assert.Equal(t, err.Error(), task.OwnerIDRequired)
+	assert.Equal(t, err.Error(), task.ErrOwnerIDRequired)
 }
 
 func TestStatusRequired(t *testing.T) {
@@ -38,7 +38,7 @@ func TestStatusRequired(t *testing.T) {
 
 	_, err := task.NewTask(newTask)
 
-	assert.Equal(t, err.Error(), task.StatusRequired)
+	assert.Equal(t, err.Error(), task.ErrStatusRequired)
 }
 
 func TestProjectIdRequired(t *testing.T) {
@@ -47,7 +47,7 @@ func TestProjectIdRequired(t *testing.T) {
 
 	_, err := task.NewTask(newTask)
 
-	assert.Equal(t, err.Error(), task.ProjectIDRequired)
+	assert.Equal(t, err.Error(), task.ErrProjectIDRequired)
 }
 
 func TestSprintIdRequired(t *testing.T) {
@@ -56,7 +56,7 @@ func TestSprintIdRequired(t *testing.T) {
 
 	_, err := task.NewTask(newTask)
 
-	assert.Equal(t, err.Error(), task.SprintIDRequired)
+	assert.Equal(t, err.Error(), task.ErrSprintIDRequired)
 }
 
 func TestContainsRemainigHours(t *testing.T) {
@@ -65,7 +65,7 @@ func TestContainsRemainigHours(t *testing.T) {
 
 	_, err := task.NewTask(newTask)
 
-	assert.Equal(t, err.Error(), task.RemainingHoursMustBeEqaulToZero)
+	assert.Equal(t, err.Error(), task.ErrRemainingHoursMustBeEqaulToZero)
 }
 
 func createTaskRecord() *task.Task {

@@ -3,7 +3,6 @@ package repository
 import (
 	"database/sql"
 	"fmt"
-	"log"
 	"os"
 )
 
@@ -24,8 +23,8 @@ func NewPostgresConnect() *sql.DB {
 	db, err := sql.Open("postgres", connStr)
 
 	if err != nil {
-		log.Fatal(err.Error())
+		panic(err.Error())
 	}
-
+	
 	return db
 }
